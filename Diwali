@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Diwali Village Courtyard Scene</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --night-sky: #020720;
+      --moon: #f5f5f0;
+      --house-1: #6c4f3d;
+      --house-2: #8b5a3c;
+      --house-3: #7d4e3a;
+      --courtyard: #3b2a1e;
+      --courtyard-top: #4c3321;
+      --border-light: #ffd88a;
+      --spark-gold: #ffd36b;
+      --spark-white: #fff8dc;
+      --spark-red: #ff5c5c;
+      --spark-blue: #6fd2ff;
+      --spark-green: #82ff9b;
+      --person-skin: #f3c29b;
+      --toolbar-bg: rgba(10, 10, 20, 0.9);
+      --toolbar-border: rgba(255, 255, 255, 0.15);
+      --accent: #ffcc66;
+      --text-light: #f9f9ff;
+      --counter-bg: rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1b2143 0, #020720 55%, #01030c 100%);
+      color: var(--text-light);
+      overflow: hidden;
+    }
+
+    .scene-wrapper {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: radial-gradient(circle at top, #1b2143 0, #020720 55%, #01030c 100%);
+    }
+
+    /* Toolbar */
+    .toolbar {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.4rem 0.6rem;
+      background: var(--toolbar-bg);
+      border-radius: 999px;
+      border: 1px solid var(--toolbar-border);
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(10px);
+      z-index: 20;
+      align-items: center;
+    }
+
+    .toolbar-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.85;
+      margin-right: 0.1rem;
+    }
+
+    .tool-button {
+      position: relative;
+      border: 1px solid transparent;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-light);
+      cursor: pointer;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+
+    .tool-button span.icon {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    .tool-button[data-type="flowerpot"] span.icon {
+      background: linear-gradient(to top, #e67300, #ffd36b);
+    }
+
+    .tool-button[data-type="chakra"] span.icon {
+      background: radial-gradient(circle, #ffd36b 0, #ff5c5c 40%, #4b6eff 100%);
+    }
+
+    .tool-button.active {
+      background: rgba(255, 215, 130, 0.16);
+      border-color: rgba(255, 215, 130, 0.9);
+      box-shadow: 0 0 10px rgba(255, 215, 130, 0.4);
+    }
+
+    .tool-button:hover {
+      background: rgba(255, 255, 255, 0.09);
+      transform: translateY(-1px);
+    }
+
+    /* Counter */
+    .counter {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 0.3rem 0.7rem;
+      background: var(--counter-bg);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      z-index: 20;
+      backdrop-filter: blur(8px);
+    }
+
+    .counter-label {
+      opacity: 0.8;
+    }
+
+    .counter-value {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Night sky, moon, stars */
+    .sky {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 10%, #384b85 0, #020720 50%, #01030c 100%);
+      z-index: 0;
+    }
+
+    .moon {
+      position: absolute;
+      top: 8%;
+      right: 11%;
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle at 30% 30%, #ffffff 0, #f5f5f0 40%, #d5d3c9 70%, transparent 75%);
+      border-radius: 50%;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+      opacity: 0.95;
+    }
+
+    .star-field {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: starTwinkle 3s ease-in-out infinite;
+    }
+
+    @keyframes starTwinkle {
+      0%, 100% { opacity: 0.2; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(1.6); }
+    }
+
+    /* Ground and village */
+    .ground {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 32vh;
+      background: linear-gradient(to top, #120d09 0, #261b11 40%, transparent 100%);
+      z-index: 1;
+    }
+
+    .courtyard {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: min(900px, 92vw);
+      height: 26vh;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      perspective: 900px;
+    }
+
+    .courtyard-floor {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) rotateX(68deg);
+      transform-origin: bottom center;
+      width: 130%;
+      height: 180%;
+      background: radial-gradient(circle at 50% 20%, var(--courtyard-top) 0, var(--courtyard) 40%, #241610 80%);
+      box-shadow: 0 -40px 120px rgba(0, 0, 0, 0.9) inset;
+      border-radius: 50% 50% 0 0;
+    }
+
+    .courtyard-grid {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      transform: translateZ(0);
+    }
+
+    .courtyard-grid::before {
+      content: "";
+      position: absolute;
+      inset: 8% 10% 0 10%;
+      border-radius: 60% 60% 0 0;
+      background-image:
+        linear-gradient(to right, rgba(255, 220, 180, 0.06) 1px, transparent 1px),
+        linear-gradient(to top, rgba(255, 220, 180, 0.06) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.65;
+      mix-blend-mode: screen;
+    }
+
+    /* Houses row */
+    .houses-row {
+      position: absolute;
+      bottom: 22vh;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(980px, 95vw);
+      height: 32vh;
+      display: grid;
+      grid-template-columns: 1.1fr 1.1fr 1.1fr;
+      gap: 2%;
+      z-index: 2;
+    }
+
+    .house {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      border-radius: 6px;
+      overflow: visible;
+      box-shadow: 0 28px 45px rgba(0, 0, 0, 0.7);
+    }
+
+    .house-body {
+      position: relative;
+      flex: 1;
+      padding: 12px 12px 22px;
+      border-radius: 0 0 6px 6px;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4) inset;
+    }
+
+    .house.roofed::before {
+      content: "";
+      position: absolute;
+      top: -32px;
+      left: -6px;
+      right: -6px;
+      height: 32px;
+      background: linear-gradient(to bottom, #2b1b15, #3d261b);
+      transform: skewX(-6deg);
+      transform-origin: left bottom;
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.65);
+      border-radius: 8px 8px 0 0;
+      z-index: -1;
+    }
+
+    .house-1 .house-body { background: linear-gradient(to bottom, #8f6248, var(--house-1)); }
+    .house-2 .house-body { background: linear-gradient(to bottom, #a46d49, var(--house-2)); }
+    .house-3 .house-body { background: linear-gradient(to bottom, #9b654d, var(--house-3)); }
+
+    .house-front {
+      position: relative;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .door {
+      justify-self: center;
+      width: 34px;
+      height: 64px;
+      background: linear-gradient(to right, #2b180f, #3a2115);
+      border-radius: 4px 4px 1px 1px;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .door::before {
+      content: "";
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffd36b 0, #cc9b3a 80%);
+    }
+
+    .window {
+      justify-self: center;
+      width: 38px;
+      height: 30px;
+      background: radial-gradient(circle at 20% 0, #ffe9a8 0, #f4c96e 50%, #e79e3f 100%);
+      border-radius: 3px;
+      box-shadow: 0 0 0 2px rgba(36, 18, 6, 0.85);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .window::before,
+    .window::after {
+      content: "";
+      position: absolute;
+      background: rgba(40, 22, 8, 0.7);
+    }
+
+    .window::before {
+      left: 50%;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      transform: translateX(-50%);
+    }
+
+    .window::after {
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      transform: translateY(-50%);
+    }
+
+    /* String lights */
+    .string-lights {
+      position: absolute;
+      top: -18px;
+      left: -4px;
+      right: -4px;
+      height: 16px;
+      pointer-events: none;
+    }
+
+    .light-line {
+      position: absolute;
+      top: 6px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(to right, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.4));
+      opacity: 0.9;
+    }
+
+    .light-bulb {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--border-light);
+      box-shadow: 0 0 5px rgba(255, 216, 138, 0.8);
+      animation: bulbTwinkle 1.6s ease-in-out infinite alternate;
+    }
+
+    .light-bulb:nth-child(3n) { background: #fffa9b; }
+    .light-bulb:nth-child(3n+1) { background: #ffadad; }
+    .light-bulb:nth-child(3n+2) { background: #9bf3ff; }
+
+    @keyframes bulbTwinkle {
+      0% { opacity: 0.45; transform: translateY(0) scale(0.8); }
+      100% { opacity: 1; transform: translateY(1px) scale(1.4); }
+    }
+
+    .house-border-lights {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .border-light-dot {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--border-light);
+      opacity: 0.5;
+      box-shadow: 0 0 4px rgba(255, 216, 138, 0.7);
+      animation: borderTwinkle 1.3s ease-in-out infinite alternate;
+    }
+
+    @keyframes borderTwinkle {
+      0% { opacity: 0.2; transform: scale(0.6); }
+      100% { opacity: 0.8; transform: scale(1.2); }
+    }
+
+    /* People */
+    .characters-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .person {
+      position: absolute;
+      width: 28px;
+      height: 70px;
+      transform-origin: bottom center;
+      pointer-events: none;
+      animation: sway 2.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes sway {
+      0% { transform: translateX(0) rotate(-1deg); }
+      100% { transform: translateX(0) rotate(1deg); }
+    }
+
+    .body {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 42px;
+      border-radius: 11px 11px 4px 4px;
+    }
+
+    .head {
+      position: absolute;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ffe3c6 0, var(--person-skin) 40%, #d7956e 80%);
+      box-shadow: 0 0 0 1px rgba(80, 40, 20, 0.4);
+    }
+
+    .legs {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 16px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .leg {
+      width: 6px;
+      height: 100%;
+      background: linear-gradient(to bottom, #3b2920, #120c08);
+      border-radius: 3px;
+      animation: walkLeg 0.7s ease-in-out infinite alternate;
+    }
+
+    .leg:nth-child(2) {
+      animation-delay: -0.35s;
+    }
+
+    @keyframes walkLeg {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-2px); }
+    }
+
+    .person.male .body {
+      background: linear-gradient(to bottom, #274d7e, #132a45);
+    }
+
+    .person.male:nth-child(2) .body {
+      background: linear-gradient(to bottom, #2b7a4b, #15402a);
+    }
+
+    .person.female .body {
+      background: linear-gradient(to bottom, #b03060, #5b1532);
+    }
+
+    .person.female:nth-child(2) .body {
+      background: linear-gradient(to bottom, #d7841c, #80420b);
+    }
+
+    .person.female:nth-child(3) .body {
+      background: linear-gradient(to bottom, #8447d6, #3d1f74);
+    }
+
+    .dupatta {
+      position: absolute;
+      bottom: 35px;
+      left: 40%;
+      width: 18px;
+      height: 16px;
+      background: linear-gradient(to right, rgba(255, 226, 230, 0.9), rgba(255, 170, 190, 0.3));
+      border-radius: 18px 18px 8px 8px;
+      filter: blur(0.2px);
+      animation: dupattaFloat 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes dupattaFloat {
+      0% { transform: translateX(0) rotate(-6deg); opacity: 0.85; }
+      100% { transform: translateX(2px) rotate(-2deg); opacity: 1; }
+    }
+
+    .kid .body {
+      height: 30px;
+      width: 18px;
+      border-radius: 9px 9px 4px 4px;
+      background: linear-gradient(to bottom, #2d94b0, #145265);
+    }
+
+    .kid .head {
+      width: 13px;
+      height: 13px;
+      bottom: 40px;
+    }
+
+    .kid .legs {
+      height: 14px;
+    }
+
+    .kid:nth-of-type(2) .body { background: linear-gradient(to bottom, #f05454, #aa2c34); }
+    .kid:nth-of-type(3) .body { background: linear-gradient(to bottom, #33b864, #13733a); }
+    .kid:nth-of-type(4) .body { background: linear-gradient(to bottom, #f7b731, #c28100); }
+
+    /* Sparklers */
+    .sparkler-hand {
+      position: absolute;
+      bottom: 26px;
+      right: -4px;
+      width: 18px;
+      height: 18px;
+      transform-origin: left bottom;
+      animation: handWave 0.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes handWave {
+      0% { transform: rotate(-10deg); }
+      100% { transform: rotate(6deg); }
+    }
+
+    .sparkler-stick {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 2px;
+      height: 12px;
+      background: linear-gradient(to top, #444, #777);
+    }
+
+    .sparkler-glow {
+      position: absolute;
+      top: -3px;
+      left: -4px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fffdf2 0, #ffe688 40%, rgba(255, 230, 136, 0) 70%);
+      box-shadow: 0 0 10px rgba(255, 240, 180, 0.9);
+      animation: sparklerFlicker 0.26s linear infinite;
+    }
+
+    .sparkler-particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: #fffcea;
+      animation: sparklerParticle 0.4s ease-out infinite;
+    }
+
+    @keyframes sparklerFlicker {
+      0%, 100% { transform: scale(0.9); opacity: 0.9; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+
+    @keyframes sparklerParticle {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.3); }
+    }
+
+    /* Crackers */
+    .crackers-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .cracker {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      transform-origin: center bottom;
+      pointer-events: auto;
+    }
+
+    .cracker.flowerpot .shape {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 20px;
+      background: linear-gradient(to top, #7a2800, #f0a400);
+      border-radius: 4px 4px 10px 10px;
+      box-shadow: 0 0 0 1px rgba(50, 20, 5, 0.7);
+    }
+
+    .cracker.flowerpot .shape::before {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 4px;
+      right: 4px;
+      height: 3px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #ffe9b5 0, #f29d30 60%, transparent 80%);
+    }
+
+    .cracker.chakra .shape {
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffd36b 0, #ff5c5c 40%, #4b6eff 100%);
+      box-shadow: 0 0 0 2px rgba(20, 10, 0, 0.8), 0 0 14px rgba(255, 150, 80, 0.7);
+    }
+
+    .cracker.chakra .shape::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      border: 2px dotted rgba(255, 255, 255, 0.7);
+    }
+
+    .cracker-halo {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 26px;
+      height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 200, 120, 0.7) 0, rgba(255, 200, 120, 0) 70%);
+      opacity: 0.5;
+      filter: blur(1px);
+    }
+
+    .cracker:hover .shape {
+      transform: translateX(-50%) scale(1.05) translateY(-1px);
+    }
+
+    .cracker:hover .cracker-halo {
+      opacity: 0.8;
+    }
+
+    /* Explosion particles */
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    /* Flowerpot fountain */
+    .flower-fountain .particle {
+      background: radial-gradient(circle, var(--spark-gold) 0, var(--spark-red) 70%);
+      animation: fountainParticle 900ms ease-out forwards;
+    }
+
+    @keyframes fountainParticle {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      80% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1.1); }
+      100% { opacity: 0; transform: translate(calc(var(--tx) * 1.1), calc(var(--ty) * 1.25)) scale(0.3); }
+    }
+
+    /* Chakra spin */
+    .chakra-spin .particle {
+      background: radial-gradient(circle, var(--spark-white) 0, var(--spark-blue) 60%);
+      animation: chakraParticle 850ms ease-out forwards;
+    }
+
+    @keyframes chakraParticle {
+      0% { opacity: 1; transform: translate(0, 0) scale(0.7); }
+      60% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1.2); }
+      100% { opacity: 0; transform: translate(calc(var(--tx) * 1.3), calc(var(--ty) * 1.3)) scale(0.3); }
+    }
+
+    /* Common sparkle burst */
+    .spark-burst .particle {
+      background: radial-gradient(circle, var(--spark-white) 0, var(--spark-green) 60%);
+      animation: burstParticle 680ms ease-out forwards;
+    }
+
+    @keyframes burstParticle {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.1); }
+    }
+
+    /* Chakra body spin */
+    .chakra-animating .shape {
+      animation: chakraSpin 420ms linear infinite;
+    }
+
+    @keyframes chakraSpin {
+      0% { transform: translateX(-50%) rotate(0deg); }
+      100% { transform: translateX(-50%) rotate(360deg); }
+    }
+
+    /* Accessibility - focus outlines for toolbar buttons */
+    .tool-button:focus-visible {
+      outline: 2px solid #ffe89a;
+      outline-offset: 3px;
+    }
+
+    /* Responsiveness */
+    @media (max-width: 700px) {
+      .houses-row {
+        bottom: 24vh;
+        height: 30vh;
+      }
+      .courtyard {
+        height: 30vh;
+      }
+      .moon {
+        width: 60px;
+        height: 60px;
+      }
+      .person {
+        transform: scale(0.85);
+      }
+      .cracker {
+        transform: scale(0.9);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .toolbar {
+        font-size: 0.75rem;
+      }
+      .counter {
+        font-size: 0.78rem;
+      }
+      .houses-row {
+        bottom: 25vh;
+        height: 28vh;
+      }
+      .courtyard {
+        height: 30vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene-wrapper" aria-label="Animated Diwali village courtyard scene">
+    <header class="toolbar" aria-label="Cracker type selector">
+      <span class="toolbar-label">Cracker:</span>
+      <button class="tool-button active" data-type="flowerpot" type="button" aria-pressed="true">
+        <span class="icon" aria-hidden="true"></span>
+        Flowerpot
+      </button>
+      <button class="tool-button" data-type="chakra" type="button" aria-pressed="false">
+        <span class="icon" aria-hidden="true"></span>
+        Chakra
+      </button>
+    </header>
+
+    <div class="counter" aria-live="polite">
+      <span class="counter-label">Crackers launched:</span>
+      <span class="counter-value" id="crackerCount">0</span>
+    </div>
+
+    <main class="scene">
+      <div class="sky" aria-hidden="true">
+        <div class="moon"></div>
+        <div class="star-field" id="starField"></div>
+      </div>
+
+      <div class="houses-row" aria-hidden="true">
+        <div class="house house-1 roofed">
+          <div class="string-lights"></div>
+          <div class="house-body">
+            <div class="house-front">
+              <div class="window"></div>
+              <div class="window"></div>
+              <div class="door"></div>
+              <div class="window"></div>
+            </div>
+          </div>
+          <div class="house-border-lights"></div>
+        </div>
+        <div class="house house-2 roofed">
+          <div class="string-lights"></div>
+          <div class="house-body">
+            <div class="house-front">
+              <div class="window"></div>
+              <div class="window"></div>
+              <div class="door"></div>
+              <div class="window"></div>
+            </div>
+          </div>
+          <div class="house-border-lights"></div>
+        </div>
+        <div class="house house-3 roofed">
+          <div class="string-lights"></div>
+          <div class="house-body">
+            <div class="house-front">
+              <div class="window"></div>
+              <div class="window"></div>
+              <div class="door"></div>
+              <div class="window"></div>
+            </div>
+          </div>
+          <div class="house-border-lights"></div>
+        </div>
+      </div>
+
+      <div class="ground" aria-hidden="true">
+        <div class="courtyard">
+          <div class="courtyard-floor"></div>
+          <div class="courtyard-grid"></div>
+        </div>
+      </div>
+
+      <div class="characters-layer" aria-hidden="true" id="charactersLayer"></div>
+      <div class="crackers-layer" id="crackersLayer" aria-label="Courtyard crackers"></div>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const starField = document.getElementById('starField');
+      const crackersLayer = document.getElementById('crackersLayer');
+      const charactersLayer = document.getElementById('charactersLayer');
+      const countEl = document.getElementById('crackerCount');
+      const toolbarButtons = document.querySelectorAll('.tool-button');
+      let currentType = 'flowerpot';
+      let crackerCount = 0;
+
+      /* Utility */
+      function rand(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      /* Stars */
+      function createStars() {
+        const starTotal = 140;
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < starTotal; i++) {
+          const star = document.createElement('div');
+          star.className = 'star';
+          const x = Math.random() * 100;
+          const y = Math.random() * 55; // upper sky
+          star.style.left = x + '%';
+          star.style.top = y + '%';
+          const delay = Math.random() * 3;
+          const scale = rand(0.8, 1.6);
+          star.style.animationDelay = (-delay).toFixed(2) + 's';
+          star.style.transform = 'scale(' + scale.toFixed(2) + ')';
+          frag.appendChild(star);
+        }
+        starField.appendChild(frag);
+      }
+
+      /* House lights */
+      function initHouseLights() {
+        document.querySelectorAll('.string-lights').forEach(line => {
+          const bulbs = 14;
+          const frag = document.createDocumentFragment();
+          const lineSpan = document.createElement('div');
+          lineSpan.className = 'light-line';
+          frag.appendChild(lineSpan);
+          for (let i = 0; i < bulbs; i++) {
+            const b = document.createElement('div');
+            b.className = 'light-bulb';
+            const pct = (i + 0.5) * (100 / bulbs);
+            b.style.left = pct + '%';
+            b.style.animationDelay = (-Math.random()).toFixed(2) + 's';
+            frag.appendChild(b);
+          }
+          line.appendChild(frag);
+        });
+
+        document.querySelectorAll('.house-border-lights').forEach(border => {
+          const rect = border.getBoundingClientRect();
+          const wDots = 18;
+          const hDots = 10;
+          const frag = document.createDocumentFragment();
+          for (let i = 0; i <= wDots; i++) {
+            const topDot = document.createElement('div');
+            topDot.className = 'border-light-dot';
+            const pct = (i / wDots) * 100;
+            topDot.style.left = pct + '%';
+            topDot.style.top = '-3px';
+            topDot.style.animationDelay = (-Math.random()).toFixed(2) + 's';
+            frag.appendChild(topDot);
+          }
+          for (let i = 0; i <= hDots; i++) {
+            const leftDot = document.createElement('div');
+            leftDot.className = 'border-light-dot';
+            leftDot.style.left = '-3px';
+            leftDot.style.top = (i / hDots) * 100 + '%';
+            leftDot.style.animationDelay = (-Math.random()).toFixed(2) + 's';
+            frag.appendChild(leftDot);
+
+            const rightDot = document.createElement('div');
+            rightDot.className = 'border-light-dot';
+            rightDot.style.right = '-3px';
+            rightDot.style.top = (i / hDots) * 100 + '%';
+            rightDot.style.animationDelay = (-Math.random()).toFixed(2) + 's';
+            frag.appendChild(rightDot);
+          }
+          if (rect.width > 0) border.appendChild(frag);
+        });
+      }
+
+      /* Characters */
+      function createPerson(options) {
+        const {
+          type,
+          x,
+          y,
+          pathWidth,
+          duration,
+          isKid,
+          hasSparkler
+        } = options;
+
+        const p = document.createElement('div');
+        p.className = 'person ' + (isKid ? 'kid' : type);
+        const startLeft = x;
+        p.style.left = startLeft + 'px';
+        p.style.bottom = y + 'px';
+
+        const body = document.createElement('div');
+        body.className = 'body';
+        const head = document.createElement('div');
+        head.className = 'head';
+        const legs = document.createElement('div');
+        legs.className = 'legs';
+        legs.innerHTML = '<div class="leg"></div><div class="leg"></div>';
+
+        p.appendChild(body);
+        if (type === 'female' && !isKid) {
+          const dup = document.createElement('div');
+          dup.className = 'dupatta';
+          p.appendChild(dup);
+        }
+        p.appendChild(head);
+        p.appendChild(legs);
+
+        if (hasSparkler) {
+          const hand = document.createElement('div');
+          hand.className = 'sparkler-hand';
+          const stick = document.createElement('div');
+          stick.className = 'sparkler-stick';
+          const glow = document.createElement('div');
+          glow.className = 'sparkler-glow';
+          hand.appendChild(stick);
+          hand.appendChild(glow);
+
+          for (let i = 0; i < 6; i++) {
+            const sp = document.createElement('div');
+            sp.className = 'sparkler-particle';
+            const angle = (Math.PI * 2 * i) / 6;
+            const tx = Math.cos(angle) * 10 + rand(-3, 3);
+            const ty = Math.sin(angle) * 10 + rand(-3, 3);
+            sp.style.setProperty('--tx', tx + 'px');
+            sp.style.setProperty('--ty', ty + 'px');
+            sp.style.animationDelay = (-Math.random() * 0.4).toFixed(2) + 's';
+            glow.appendChild(sp);
+          }
+
+          p.appendChild(hand);
+        }
+
+        charactersLayer.appendChild(p);
+
+        const moveDuration = duration || rand(10, 18);
+        const moveAmplitude = pathWidth || rand(40, 120);
+        const directionRight = Math.random() > 0.5;
+        let startTime = performance.now() - Math.random() * moveDuration * 1000;
+
+        function step(now) {
+          const t = ((now - startTime) / (moveDuration * 1000)) % 1;
+          const phase = directionRight ? t : 1 - t;
+          const offset = (phase - 0.5) * 2 * moveAmplitude;
+          p.style.left = (startLeft + offset) + 'px';
+          requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
+      function initCharacters() {
+        const courtyardRect = document.querySelector('.courtyard').getBoundingClientRect();
+        const layerRect = charactersLayer.getBoundingClientRect();
+        const baseY = 35;
+        const width = courtyardRect.width;
+        const offsetLeft = courtyardRect.left - layerRect.left;
+
+        function localX(rel) {
+          return offsetLeft + width * rel;
+        }
+
+        // 2 men
+        createPerson({ type: 'male', x: localX(0.3), y: baseY, pathWidth: 90, duration: 13, isKid: false, hasSparkler: false });
+        createPerson({ type: 'male', x: localX(0.7), y: baseY + 5, pathWidth: 70, duration: 15, isKid: false, hasSparkler: false });
+
+        // 3 women
+        createPerson({ type: 'female', x: localX(0.18), y: baseY + 8, pathWidth: 60, duration: 14, isKid: false, hasSparkler: false });
+        createPerson({ type: 'female', x: localX(0.5), y: baseY + 3, pathWidth: 80, duration: 16, isKid: false, hasSparkler: false });
+        createPerson({ type: 'female', x: localX(0.83), y: baseY + 10, pathWidth: 55, duration: 13, isKid: false, hasSparkler: false });
+
+        // 4 kids with sparklers
+        createPerson({ type: 'kid', x: localX(0.26), y: baseY + 2, pathWidth: 60, duration: 10, isKid: true, hasSparkler: true });
+        createPerson({ type: 'kid', x: localX(0.44), y: baseY + 4, pathWidth: 65, duration: 11, isKid: true, hasSparkler: true });
+        createPerson({ type: 'kid', x: localX(0.62), y: baseY + 1, pathWidth: 70, duration: 9, isKid: true, hasSparkler: true });
+        createPerson({ type: 'kid', x: localX(0.8), y: baseY + 6, pathWidth: 75, duration: 12, isKid: true, hasSparkler: true });
+      }
+
+      /* Crackers */
+      function createCrackerElement(type, x, y) {
+        const c = document.createElement('button');
+        c.className = 'cracker ' + type;
+        c.setAttribute('type', 'button');
+        c.setAttribute('aria-label', type === 'flowerpot' ? 'Flowerpot cracker' : 'Chakra cracker');
+        c.style.left = x + 'px';
+        c.style.bottom = y + 'px';
+        c.innerHTML = '<div class="cracker-halo"></div><div class="shape"></div>';
+        return c;
+      }
+
+      function incrementCounter() {
+        crackerCount++;
+        countEl.textContent = crackerCount;
+      }
+
+      function launchFlowerpot(x, y) {
+        const container = document.createElement('div');
+        container.className = 'flower-fountain';
+        container.style.position = 'absolute';
+        container.style.left = x + 'px';
+        container.style.bottom = y + 15 + 'px';
+        container.style.pointerEvents = 'none';
+
+        const particleCount = 55;
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < particleCount; i++) {
+          const angle = rand(-Math.PI * 0.12, -Math.PI * 0.88); // mostly upwards
+          const speed = rand(60, 125);
+          const tx = Math.cos(angle) * speed;
+          const ty = Math.sin(angle) * speed;
+          const p = document.createElement('div');
+          p.className = 'particle';
+          p.style.setProperty('--tx', tx + 'px');
+          p.style.setProperty('--ty', ty + 'px');
+          p.style.left = '0px';
+          p.style.bottom = '0px';
+          p.style.animationDelay = (i * 6) + 'ms';
+          frag.appendChild(p);
+        }
+        container.appendChild(frag);
+        crackersLayer.appendChild(container);
+
+        container.offsetHeight;
+        container.classList.add('flower-fountain');
+
+        const sparkle = document.createElement('div');
+        sparkle.className = 'spark-burst';
+        sparkle.style.position = 'absolute';
+        sparkle.style.left = x + 'px';
+        sparkle.style.bottom = y + 20 + 'px';
+        const sFrag = document.createDocumentFragment();
+        for (let i = 0; i < 25; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const dist = rand(10, 40);
+          const tx = Math.cos(angle) * dist;
+          const ty = Math.sin(angle) * dist;
+          const sp = document.createElement('div');
+          sp.className = 'particle';
+          sp.style.setProperty('--tx', tx + 'px');
+          sp.style.setProperty('--ty', ty + 'px');
+          sp.style.left = '0px';
+          sp.style.bottom = '0px';
+          sFrag.appendChild(sp);
+        }
+        sparkle.appendChild(sFrag);
+        crackersLayer.appendChild(sparkle);
+
+        setTimeout(() => {
+          container.remove();
+          sparkle.remove();
+        }, 1300);
+      }
+
+      function launchChakra(x, y) {
+        const container = document.createElement('div');
+        container.className = 'chakra-spin';
+        container.style.position = 'absolute';
+        container.style.left = x + 'px';
+        container.style.bottom = y + 8 + 'px';
+        container.style.pointerEvents = 'none';
+
+        const particleCount = 70;
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < particleCount; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = rand(40, 90);
+          const tx = Math.cos(angle) * speed;
+          const ty = Math.sin(angle) * speed * 0.5; // more along ground
+          const p = document.createElement('div');
+          p.className = 'particle';
+          p.style.setProperty('--tx', tx + 'px');
+          p.style.setProperty('--ty', ty + 'px');
+          p.style.left = '0px';
+          p.style.bottom = '0px';
+          p.style.animationDelay = (i * 4) + 'ms';
+          frag.appendChild(p);
+        }
+        container.appendChild(frag);
+        crackersLayer.appendChild(container);
+        container.offsetHeight;
+        container.classList.add('chakra-spin');
+
+        const sparkle = document.createElement('div');
+        sparkle.className = 'spark-burst';
+        sparkle.style.position = 'absolute';
+        sparkle.style.left = x + 'px';
+        sparkle.style.bottom = y + 10 + 'px';
+        const sFrag = document.createDocumentFragment();
+        for (let i = 0; i < 20; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const dist = rand(5, 30);
+          const tx = Math.cos(angle) * dist;
+          const ty = Math.sin(angle) * dist;
+          const sp = document.createElement('div');
+          sp.className = 'particle';
+          sp.style.setProperty('--tx', tx + 'px');
+          sp.style.setProperty('--ty', ty + 'px');
+          sp.style.left = '0px';
+          sp.style.bottom = '0px';
+          sFrag.appendChild(sp);
+        }
+        sparkle.appendChild(sFrag);
+        crackersLayer.appendChild(sparkle);
+
+        setTimeout(() => {
+          container.remove();
+          sparkle.remove();
+        }, 1100);
+      }
+
+      function attachCrackerListeners(el, type) {
+        function fire(ev) {
+          ev.stopPropagation();
+          ev.preventDefault();
+          const rect = crackersLayer.getBoundingClientRect();
+          const cRect = el.getBoundingClientRect();
+          const x = cRect.left - rect.left + cRect.width / 2;
+          const y = parseFloat(el.style.bottom) || 30;
+
+          el.classList.add(type === 'chakra' ? 'chakra-animating' : '');
+
+          if (type === 'flowerpot') {
+            launchFlowerpot(x, y);
+          } else {
+            launchChakra(x, y);
+          }
+          incrementCounter();
+
+          setTimeout(() => {
+            el.classList.remove('chakra-animating');
+          }, 1200);
+        }
+
+        el.addEventListener('click', fire);
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') fire(e);
+        });
+      }
+
+      function initInitialCrackers() {
+        const courtyard = document.querySelector('.courtyard');
+        const cRect = courtyard.getBoundingClientRect();
+        const lRect = crackersLayer.getBoundingClientRect();
+        const baseY = 22; // base bottom in px relative to crackers layer
+
+        function pos(rel) {
+          return cRect.left - lRect.left + cRect.width * rel;
+        }
+
+        // Two flowerpots
+        const fp1 = createCrackerElement('flowerpot', pos(0.3), baseY);
+        const fp2 = createCrackerElement('flowerpot', pos(0.7), baseY + 3);
+        // Three chakras
+        const ch1 = createCrackerElement('chakra', pos(0.18), baseY - 2);
+        const ch2 = createCrackerElement('chakra', pos(0.5), baseY + 1);
+        const ch3 = createCrackerElement('chakra', pos(0.82), baseY - 1);
+
+        [fp1, fp2, ch1, ch2, ch3].forEach(el => {
+          crackersLayer.appendChild(el);
+          const type = el.classList.contains('flowerpot') ? 'flowerpot' : 'chakra';
+          attachCrackerListeners(el, type);
+        });
+      }
+
+      /* Toolbar interaction: click on courtyard to place new cracker of selected type */
+      function initPlacement() {
+        toolbarButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            toolbarButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentType = btn.getAttribute('data-type') || 'flowerpot';
+            toolbarButtons.forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+          });
+        });
+
+        const courtyard = document.querySelector('.courtyard');
+        courtyard.addEventListener('click', (e) => {
+          const rect = courtyard.getBoundingClientRect();
+          const layerRect = crackersLayer.getBoundingClientRect();
+          const x = e.clientX - layerRect.left;
+          const yBase = 20; // constant ground level for crackers
+          const newCracker = createCrackerElement(currentType, x, yBase);
+          crackersLayer.appendChild(newCracker);
+          attachCrackerListeners(newCracker, currentType);
+        });
+      }
+
+      /* Init */
+      window.addEventListener('load', () => {
+        createStars();
+        initHouseLights();
+        initCharacters();
+        initInitialCrackers();
+        initPlacement();
+      });
+
+      window.addEventListener('resize', () => {
+        charactersLayer.innerHTML = '';
+        crackersLayer.innerHTML = '';
+        crackerCount = 0;
+        countEl.textContent = '0';
+        initCharacters();
+        initInitialCrackers();
+      });
+    })();
+  </script>
+</body>
+</html>
