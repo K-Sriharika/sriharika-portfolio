@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Concave Mirror Simulator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel-bg: #111827;
+      --panel-border: #1f2937;
+      --accent: #60a5fa;
+      --accent-soft: rgba(96,165,250,0.15);
+      --accent-strong: #3b82f6;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --grid: rgba(148, 163, 184, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #020617 45%, #000 100%);
+      color: var(--text);
+    }
+
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .app-shell {
+      max-width: 1120px;
+      width: 100%;
+      margin: 16px;
+      padding: 16px 16px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.08), transparent 55%),
+                  radial-gradient(circle at top right, rgba(129,140,248,0.12), transparent 60%),
+                  #020617;
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.9),
+        0 18px 50px rgba(15,23,42,0.95);
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(260px, 1fr);
+      grid-gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .app-shell {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .title-row {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    .title-row h1 {
+      margin: 0;
+      font-size: 1.3rem;
+      letter-spacing: 0.03em;
+      color: #e5e7eb;
+      text-shadow: 0 0 12px rgba(96,165,250,0.28);
+    }
+
+    .title-row span {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .canvas-panel {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: radial-gradient(circle at 20% 0, rgba(56,189,248,0.18), transparent 58%),
+                  radial-gradient(circle at 80% -10%, rgba(244,114,182,0.18), transparent 55%),
+                  #020617;
+      border: 1px solid rgba(148, 163, 184, 0.32);
+    }
+
+    #simCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(15,23,42,0.8), #020617 65%);
+      cursor: grab;
+      outline: none;
+    }
+
+    #simCanvas:active {
+      cursor: grabbing;
+    }
+
+    .panel-right {
+      border-radius: 12px;
+      background: linear-gradient(145deg, rgba(15,23,42,0.96), rgba(2,6,23,0.98));
+      border: 1px solid rgba(15,23,42,0.9);
+      box-shadow: inset 0 0 0 1px rgba(148,163,184,0.08);
+      padding: 12px 14px;
+      font-size: 0.86rem;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .section-header {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 10px;
+    }
+
+    .field-label {
+      color: var(--muted);
+      font-size: 0.76rem;
+      margin-bottom: 3px;
+    }
+
+    .range-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(55,65,81,0.9);
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent-strong);
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.25);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent-strong);
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.25);
+      cursor: pointer;
+      border: none;
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(55,65,81,0.9);
+    }
+
+    .value-pill {
+      min-width: 56px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(55,65,81,0.95);
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--accent);
+    }
+
+    .toggle-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 8px;
+      margin-top: 2px;
+    }
+
+    .toggle-row label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .toggle-row input[type="checkbox"] {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: #020617;
+      accent-color: var(--accent-strong);
+    }
+
+    .summary-box {
+      margin-top: 2px;
+      padding: 8px 9px;
+      border-radius: 10px;
+      background: radial-gradient(circle at 0 0, rgba(59,130,246,0.15), transparent 60%),
+                  rgba(15,23,42,0.98);
+      border: 1px solid rgba(55,65,81,0.9);
+    }
+
+    .summary-box strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 8px;
+      margin-top: 5px;
+      font-size: 0.78rem;
+    }
+
+    .summary-grid div span:first-child {
+      color: var(--muted);
+      display: inline-block;
+      min-width: 78px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      padding: 1px 7px 2px;
+      border-radius: 999px;
+      border: 1px solid rgba(59,130,246,0.6);
+      background: rgba(15,23,42,0.9);
+      color: var(--accent);
+      margin-left: 4px;
+    }
+
+    .legend {
+      margin-top: 2px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 10px;
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-swatch {
+      width: 16px;
+      height: 3px;
+      border-radius: 999px;
+    }
+
+    .legend-swatch.incident {
+      background: linear-gradient(90deg, #fbbf24, #fcd34d);
+    }
+
+    .legend-swatch.reflected {
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+    }
+
+    .legend-swatch.axis {
+      background: linear-gradient(90deg, rgba(148,163,184,0.1), rgba(148,163,184,0.65));
+    }
+
+    .legend-swatch.virtual {
+      background: repeating-linear-gradient(90deg, rgba(96,165,250,0.6), rgba(96,165,250,0.6) 3px, transparent 3px, transparent 6px);
+    }
+
+    .hint {
+      margin-top: 2px;
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .hint kbd {
+      font-size: 0.72rem;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(55,65,81,0.9);
+    }
+
+    .note {
+      margin-top: 2px;
+      font-size: 0.7rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell" role="application" aria-label="Concave mirror simulator">
+    <div class="title-row">
+      <h1>Concave Mirror Simulator</h1>
+      <span>Drag the light source – rays update in real time</span>
+    </div>
+
+    <section class="canvas-panel" aria-label="Optics diagram">
+      <canvas id="simCanvas" aria-label="Concave mirror diagram" tabindex="0"></canvas>
+    </section>
+
+    <aside class="panel-right" aria-label="Simulation controls and explanation">
+      <div>
+        <div class="section-header">Controls</div>
+        <div class="controls-grid" aria-label="Mirror and object settings">
+          <div>
+            <div class="field-label">Focal length (f)</div>
+            <div class="range-row">
+              <input id="focalRange" type="range" min="40" max="200" value="120" aria-label="Focal length" />
+              <div id="focalValue" class="value-pill">f = 120</div>
+            </div>
+          </div>
+          <div>
+            <div class="field-label">Mirror size</div>
+            <div class="range-row">
+              <input id="radiusRange" type="range" min="70" max="180" value="130" aria-label="Mirror size" />
+              <div id="radiusValue" class="value-pill">H = 130</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="toggle-row" aria-label="Display options">
+          <label><input id="showGrid" type="checkbox" checked /> grid</label>
+          <label><input id="showImage" type="checkbox" checked /> show image</label>
+          <label><input id="showConstruction" type="checkbox" checked /> construction rays</label>
+        </div>
+      </div>
+
+      <div class="summary-box" aria-live="polite">
+        <div>
+          Current configuration
+          <span id="imageTypeBadge" class="badge">Real, inverted</span>
+        </div>
+        <div class="summary-grid">
+          <div><span>Object distance:</span><span id="objectDistanceSummary">–</span></div>
+          <div><span>Image distance:</span><span id="imageDistanceSummary">–</span></div>
+          <div><span>Magnification:</span><span id="magnificationSummary">–</span></div>
+          <div><span>Image nature:</span><span id="imageNatureSummary">–</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-header">Legend</div>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-swatch incident"></span><span>Incident ray</span></div>
+          <div class="legend-item"><span class="legend-swatch reflected"></span><span>Reflected ray</span></div>
+          <div class="legend-item"><span class="legend-swatch axis"></span><span>Principal axis</span></div>
+          <div class="legend-item"><span class="legend-swatch virtual"></span><span>Virtual extension</span></div>
+        </div>
+      </div>
+
+      <div class="hint">
+        Drag the yellow light source with the mouse or touch. Hold <kbd>Shift</kbd> while dragging to move only vertically.
+      </div>
+      <div class="note">
+        The image position is computed from the mirror formula
+        <span aria-label="Mirror equation">1/f = 1/do + 1/di</span>.
+        The blue ray bundle is a fan of parallel rays emitted by the source; each reflects using the law of reflection, showing how a real or virtual image forms.
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById('simCanvas');
+      const ctx = canvas.getContext('2d');
+
+      const focalRange = document.getElementById('focalRange');
+      const radiusRange = document.getElementById('radiusRange');
+      const focalValue = document.getElementById('focalValue');
+      const radiusValue = document.getElementById('radiusValue');
+      const showGridCheckbox = document.getElementById('showGrid');
+      const showImageCheckbox = document.getElementById('showImage');
+      const showConstructionCheckbox = document.getElementById('showConstruction');
+
+      const objectDistanceSummary = document.getElementById('objectDistanceSummary');
+      const imageDistanceSummary = document.getElementById('imageDistanceSummary');
+      const magnificationSummary = document.getElementById('magnificationSummary');
+      const imageNatureSummary = document.getElementById('imageNatureSummary');
+      const imageTypeBadge = document.getElementById('imageTypeBadge');
+
+      let width = 0;
+      let height = 0;
+      let pixelRatio = window.devicePixelRatio || 1;
+      let dragging = false;
+      let dragConstraintVerticalOnly = false;
+
+      const state = {
+        focalLength: 120, // in canvas pixels on axis
+        mirrorHalfHeight: 130,
+        // positions are in screen (canvas) coordinates
+        light: { x: 0, y: 0 },
+        mirrorX: 0,
+        axisY: 0
+      };
+
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        width = Math.max(400, rect.width);
+        height = Math.max(260, rect.height);
+        pixelRatio = window.devicePixelRatio || 1;
+        canvas.width = width * pixelRatio;
+        canvas.height = height * pixelRatio;
+        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+
+        state.mirrorX = width * 0.32;
+        state.axisY = height * 0.5;
+
+        if (!dragging && (state.light.x === 0 && state.light.y === 0)) {
+          state.light.x = width * 0.8;
+          state.light.y = height * 0.35;
+        }
+
+        draw();
+      }
+
+      function gridToReal(x, y) {
+        return { x: x, y: y };
+      }
+
+      function lineIntersection(p1, p2, p3, p4) {
+        const x1 = p1.x, y1 = p1.y;
+        const x2 = p2.x, y2 = p2.y;
+        const x3 = p3.x, y3 = p3.y;
+        const x4 = p4.x, y4 = p4.y;
+
+        const denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+        if (Math.abs(denom) < 1e-6) return null;
+        const px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denom;
+        const py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denom;
+        return { x: px, y: py };
+      }
+
+      function mirrorNormalAtPoint(point) {
+        return { x: -1, y: 0 };
+      }
+
+      function reflectVector(incident, normal) {
+        const nLen = Math.hypot(normal.x, normal.y) || 1;
+        const nx = normal.x / nLen;
+        const ny = normal.y / nLen;
+        const dot = incident.x * nx + incident.y * ny;
+        return {
+          x: incident.x - 2 * dot * nx,
+          y: incident.y - 2 * dot * ny
+        };
+      }
+
+      function drawGrid() {
+        const spacing = 40;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(148,163,184,0.13)';
+        ctx.lineWidth = 1;
+
+        for (let x = 0; x <= width; x += spacing) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, height);
+          ctx.stroke();
+        }
+
+        for (let y = 0; y <= height; y += spacing) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      function drawAxis() {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(148,163,184,0.7)';
+        ctx.lineWidth = 1.1;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, state.axisY);
+        ctx.lineTo(width, state.axisY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = 'rgba(148,163,184,0.85)';
+        ctx.font = '11px system-ui, sans-serif';
+
+        const F = { x: state.mirrorX + state.focalLength, y: state.axisY };
+        const C = { x: state.mirrorX + 2 * state.focalLength, y: state.axisY };
+
+        ctx.beginPath();
+        ctx.arc(F.x, F.y, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(C.x, C.y, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(226,232,240,0.9)';
+        ctx.textAlign = 'center';
+        ctx.fillText('F', F.x, F.y - 7);
+        ctx.fillText('C', C.x, C.y - 7);
+
+        ctx.restore();
+      }
+
+      function drawMirror() {
+        const { mirrorHalfHeight, mirrorX, axisY } = state;
+        ctx.save();
+
+        const top = axisY - mirrorHalfHeight;
+        const bottom = axisY + mirrorHalfHeight;
+
+        ctx.beginPath();
+        ctx.moveTo(mirrorX, top);
+        ctx.lineTo(mirrorX, bottom);
+
+        const grad = ctx.createLinearGradient(mirrorX - 6, 0, mirrorX + 6, 0);
+        grad.addColorStop(0, 'rgba(15,23,42,0)');
+        grad.addColorStop(0.4, 'rgba(148,163,184,0.3)');
+        grad.addColorStop(0.7, 'rgba(203,213,225,0.95)');
+        grad.addColorStop(1, 'rgba(148,163,184,0.2)');
+
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 3.2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(mirrorX + 6, top);
+        ctx.lineTo(mirrorX + 6, bottom);
+        ctx.strokeStyle = 'rgba(15,23,42,0.8)';
+        ctx.lineWidth = 2.4;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(mirrorX + 10, top + 18);
+        ctx.quadraticCurveTo(mirrorX + 19, axisY, mirrorX + 10, bottom - 18);
+        ctx.strokeStyle = 'rgba(148,163,184,0.65)';
+        ctx.setLineDash([3, 4]);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.restore();
+      }
+
+      function drawLightSource() {
+        const { x, y } = state.light;
+        ctx.save();
+
+        const grd = ctx.createRadialGradient(x, y, 0, x, y, 18);
+        grd.addColorStop(0, 'rgba(252,211,77,1)');
+        grd.addColorStop(0.4, 'rgba(251,191,36,0.85)');
+        grd.addColorStop(1, 'rgba(251,191,36,0)');
+        ctx.fillStyle = grd;
+        ctx.beginPath();
+        ctx.arc(x, y, 18, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(x, y, 7.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#facc15';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(x, y, 7.5, -Math.PI / 3, Math.PI / 3);
+        ctx.strokeStyle = 'rgba(254,249,195,0.9)';
+        ctx.lineWidth = 2.2;
+        ctx.stroke();
+
+        ctx.font = '11px system-ui, sans-serif';
+        ctx.fillStyle = 'rgba(252,211,77,0.94)';
+        ctx.textAlign = 'center';
+        ctx.fillText('Object', x, y - 15);
+
+        ctx.restore();
+      }
+
+      function computeImagePoint() {
+        const { mirrorX, axisY, focalLength } = state;
+        const obj = state.light;
+
+        const doDist = obj.x - mirrorX;
+        if (Math.abs(doDist) < 1) return null;
+
+        const f = focalLength;
+        const invDi = 1 / f - 1 / doDist;
+        if (Math.abs(invDi) < 1e-6) return null;
+        const di = 1 / invDi;
+
+        const m = -di / doDist;
+
+        const imgX = mirrorX + di;
+        const imgY = axisY + (obj.y - axisY) * m;
+        return {
+          point: { x: imgX, y: imgY },
+          m,
+          di,
+          do: doDist
+        };
+      }
+
+      function drawImagePoint(imageData) {
+        if (!imageData) return;
+        const { point, m, di, do: doDist } = imageData;
+        ctx.save();
+
+        const isReal = di > 0;
+        const isInverted = m < 0;
+        const color = isReal ? '#38bdf8' : '#f472b6';
+        const alphaFill = isReal ? 0.25 : 0.18;
+
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 10, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${isReal ? '56,189,248' : '244,114,182'},${alphaFill})`;
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = color;
+        if (!isReal) {
+          ctx.setLineDash([4, 3]);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.beginPath();
+        ctx.moveTo(point.x, state.axisY);
+        ctx.lineTo(point.x, point.y);
+        ctx.strokeStyle = isReal ? 'rgba(56,189,248,0.6)' : 'rgba(244,114,182,0.6)';
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash(isReal ? [3, 4] : [2, 3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.font = '11px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = color;
+        ctx.fillText('Image', point.x, point.y - 12);
+
+        const absDi = Math.abs(di);
+        const absDo = Math.abs(doDist);
+        const mag = -m;
+        const isVirtual = di < 0;
+
+        objectDistanceSummary.textContent = `${absDo.toFixed(0)} px`;
+        imageDistanceSummary.textContent = `${isVirtual ? '-' : ''}${absDi.toFixed(0)} px`;
+        magnificationSummary.textContent = `${mag.toFixed(2)}×`;
+        imageNatureSummary.textContent = isReal
+          ? (isInverted ? 'Real, inverted' : 'Real, upright')
+          : (isInverted ? 'Virtual, inverted' : 'Virtual, upright');
+
+        imageTypeBadge.textContent = imageNatureSummary.textContent;
+        imageTypeBadge.style.borderColor = isReal ? 'rgba(56,189,248,0.7)' : 'rgba(244,114,182,0.7)';
+        imageTypeBadge.style.color = isReal ? '#38bdf8' : '#f472b6';
+
+        ctx.restore();
+      }
+
+      function drawRays(imageData) {
+        const { light, mirrorX, mirrorHalfHeight, axisY, focalLength } = state;
+        ctx.save();
+
+        const steps = 17;
+        const top = axisY - mirrorHalfHeight;
+        const bottom = axisY + mirrorHalfHeight;
+        const stepSize = (bottom - top) / (steps - 1);
+
+        ctx.lineWidth = 1.2;
+
+        const maxExtent = Math.max(width, height) * 1.4;
+
+        for (let i = 0; i < steps; i++) {
+          const hitY = top + stepSize * i;
+          const hit = { x: mirrorX, y: hitY };
+          const incDir = { x: hit.x - light.x, y: hit.y - light.y };
+
+          const incLen = Math.hypot(incDir.x, incDir.y) || 1;
+          const incUnit = { x: incDir.x / incLen, y: incDir.y / incLen };
+
+          const normal = mirrorNormalAtPoint(hit);
+          const reflDir = reflectVector(incUnit, normal);
+
+          const incEnd = {
+            x: hit.x + incUnit.x * -40,
+            y: hit.y + incUnit.y * -40
+          };
+
+          ctx.beginPath();
+          ctx.moveTo(light.x, light.y);
+          ctx.lineTo(hit.x, hit.y);
+          ctx.lineTo(incEnd.x, incEnd.y);
+          ctx.strokeStyle = i === Math.floor(steps / 2)
+            ? 'rgba(250,204,21,0.95)'
+            : 'rgba(250,204,21,0.22)';
+          ctx.stroke();
+
+          const far = {
+            x: hit.x + reflDir.x * maxExtent,
+            y: hit.y + reflDir.y * maxExtent
+          };
+
+          ctx.beginPath();
+          ctx.moveTo(hit.x, hit.y);
+          ctx.lineTo(far.x, far.y);
+          ctx.strokeStyle = i === Math.floor(steps / 2)
+            ? 'rgba(56,189,248,0.96)'
+            : 'rgba(56,189,248,0.25)';
+          ctx.stroke();
+
+          if (imageData && imageData.di < 0) {
+            const back = {
+              x: hit.x - reflDir.x * maxExtent,
+              y: hit.y - reflDir.y * maxExtent
+            };
+            ctx.beginPath();
+            ctx.moveTo(hit.x, hit.y);
+            ctx.lineTo(back.x, back.y);
+            ctx.strokeStyle = 'rgba(96,165,250,0.36)';
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+        }
+
+        if (showConstructionCheckbox.checked) {
+          const F = { x: mirrorX + focalLength, y: axisY };
+          const obj = light;
+          const C = { x: mirrorX + 2 * focalLength, y: axisY };
+
+          ctx.lineWidth = 1.3;
+
+          ctx.beginPath();
+          ctx.moveTo(obj.x, obj.y);
+          ctx.lineTo(mirrorX, obj.y);
+          ctx.strokeStyle = 'rgba(251,191,36,0.9)';
+          ctx.stroke();
+
+          const pRayHit = { x: mirrorX, y: obj.y };
+          const pRayDir = { x: F.x - pRayHit.x, y: F.y - pRayHit.y };
+          const pRayLen = Math.hypot(pRayDir.x, pRayDir.y) || 1;
+          const pRayUnit = { x: pRayDir.x / pRayLen, y: pRayDir.y / pRayLen };
+          const pRayEnd = {
+            x: mirrorX + pRayUnit.x * maxExtent,
+            y: pRayHit.y + pRayUnit.y * maxExtent
+          };
+          ctx.beginPath();
+          ctx.moveTo(pRayHit.x, pRayHit.y);
+          ctx.lineTo(pRayEnd.x, pRayEnd.y);
+          ctx.strokeStyle = 'rgba(96,165,250,0.95)';
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(obj.x, obj.y);
+          ctx.lineTo(F.x, F.y);
+          ctx.strokeStyle = 'rgba(251,191,36,0.9)';
+          ctx.stroke();
+
+          const throughFHit = {
+            x: mirrorX,
+            y: F.y + (obj.y - F.y) * (mirrorX - F.x) / (obj.x - F.x)
+          };
+          const tRayDir = { x: C.x - throughFHit.x, y: C.y - throughFHit.y };
+          const tRayLen = Math.hypot(tRayDir.x, tRayDir.y) || 1;
+          const tRayUnit = { x: tRayDir.x / tRayLen, y: tRayDir.y / tRayLen };
+          const tRayEnd = {
+            x: throughFHit.x + tRayUnit.x * maxExtent,
+            y: throughFHit.y + tRayUnit.y * maxExtent
+          };
+
+          ctx.beginPath();
+          ctx.moveTo(throughFHit.x, throughFHit.y);
+          ctx.lineTo(tRayEnd.x, tRayEnd.y);
+          ctx.strokeStyle = 'rgba(96,165,250,0.95)';
+          ctx.stroke();
+
+          if (imageData && imageData.di < 0) {
+            ctx.setLineDash([3, 4]);
+            const pBack = {
+              x: pRayHit.x - pRayUnit.x * maxExtent,
+              y: pRayHit.y - pRayUnit.y * maxExtent
+            };
+            ctx.beginPath();
+            ctx.moveTo(pRayHit.x, pRayHit.y);
+            ctx.lineTo(pBack.x, pBack.y);
+            ctx.strokeStyle = 'rgba(96,165,250,0.4)';
+            ctx.stroke();
+
+            const tBack = {
+              x: throughFHit.x - tRayUnit.x * maxExtent,
+              y: throughFHit.y - tRayUnit.y * maxExtent
+            };
+            ctx.beginPath();
+            ctx.moveTo(throughFHit.x, throughFHit.y);
+            ctx.lineTo(tBack.x, tBack.y);
+            ctx.strokeStyle = 'rgba(96,165,250,0.4)';
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+        }
+
+        ctx.restore();
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+
+        if (showGridCheckbox.checked) {
+          drawGrid();
+        }
+
+        drawAxis();
+        drawMirror();
+
+        const imageData = showImageCheckbox.checked ? computeImagePoint() : computeImagePoint();
+
+        drawRays(imageData);
+        drawLightSource();
+
+        if (showImageCheckbox.checked) {
+          drawImagePoint(imageData);
+        } else if (imageData) {
+          const { di, do: doDist, m } = imageData;
+          const absDi = Math.abs(di);
+          const absDo = Math.abs(doDist);
+          const mag = -m;
+          const isReal = di > 0;
+          const isInverted = m < 0;
+
+          objectDistanceSummary.textContent = `${absDo.toFixed(0)} px`;
+          imageDistanceSummary.textContent = `${isReal ? '' : '-'}${absDi.toFixed(0)} px`;
+          magnificationSummary.textContent = `${mag.toFixed(2)}×`;
+          imageNatureSummary.textContent = isReal
+            ? (isInverted ? 'Real, inverted' : 'Real, upright')
+            : (isInverted ? 'Virtual, inverted' : 'Virtual, upright');
+
+          imageTypeBadge.textContent = imageNatureSummary.textContent;
+          imageTypeBadge.style.borderColor = isReal ? 'rgba(56,189,248,0.7)' : 'rgba(244,114,182,0.7)';
+          imageTypeBadge.style.color = isReal ? '#38bdf8' : '#f472b6';
+        }
+      }
+
+      function getCanvasPos(event) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+        const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+        return {
+          x: clientX - rect.left,
+          y: clientY - rect.top
+        };
+      }
+
+      function onPointerDown(event) {
+        event.preventDefault();
+        const pos = getCanvasPos(event);
+        const dx = pos.x - state.light.x;
+        const dy = pos.y - state.light.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist <= 25) {
+          dragging = true;
+          dragConstraintVerticalOnly = event.shiftKey;
+        }
+      }
+
+      function onPointerMove(event) {
+        if (!dragging) return;
+        event.preventDefault();
+        const pos = getCanvasPos(event);
+        let newX = dragConstraintVerticalOnly ? state.light.x : pos.x;
+        let newY = pos.y;
+
+        const minX = state.mirrorX + 10;
+        const maxX = width - 10;
+        newX = Math.max(minX, Math.min(maxX, newX));
+
+        const paddingY = 15;
+        newY = Math.max(paddingY, Math.min(height - paddingY, newY));
+
+        state.light.x = newX;
+        state.light.y = newY;
+        draw();
+      }
+
+      function endDrag() {
+        dragging = false;
+      }
+
+      canvas.addEventListener('mousedown', onPointerDown);
+      canvas.addEventListener('mousemove', onPointerMove);
+      window.addEventListener('mouseup', endDrag);
+
+      canvas.addEventListener('touchstart', onPointerDown, { passive: false });
+      canvas.addEventListener('touchmove', onPointerMove, { passive: false });
+      window.addEventListener('touchend', endDrag);
+      window.addEventListener('touchcancel', endDrag);
+
+      window.addEventListener('keydown', function (e) {
+        if (e.key === 'Shift') {
+          dragConstraintVerticalOnly = true;
+        }
+      });
+
+      window.addEventListener('keyup', function (e) {
+        if (e.key === 'Shift') {
+          dragConstraintVerticalOnly = false;
+        }
+      });
+
+      focalRange.addEventListener('input', function () {
+        state.focalLength = parseFloat(this.value);
+        focalValue.textContent = `f = ${this.value}`;
+        draw();
+      });
+
+      radiusRange.addEventListener('input', function () {
+        state.mirrorHalfHeight = parseFloat(this.value);
+        radiusValue.textContent = `H = ${this.value}`;
+        draw();
+      });
+
+      showGridCheckbox.addEventListener('change', draw);
+      showImageCheckbox.addEventListener('change', draw);
+      showConstructionCheckbox.addEventListener('change', draw);
+
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+    })();
+  </script>
+</body>
+</html>
