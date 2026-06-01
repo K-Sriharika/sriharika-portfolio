@@ -13,7 +13,7 @@ const PORTFOLIO = {
   initials: "KS",
   role:     "AI Evaluation Specialist · Statistical Researcher",
   location: "India · Remote",
-  photo:    "harika.jpeg",   // your photo — already in the images/ folder
+  photo:    "images/harika.jpeg",   // your photo — already in the images/ folder
 
   // ---- AVAILABILITY (shown as badges in hero) ----
   availability: ["Full-time", "Contract", "Project-based", "Freelance"],
@@ -49,25 +49,90 @@ const PORTFOLIO = {
     { group: "Tools",       items: ["Python (Pandas, NumPy, TextBlob)", "REST APIs", "Jupyter", "LaTeX", "Advanced Excel", "Labelbox"] }
   ],
 
-  // ---- EXPERIENCE ----
+  // ---- COMPLETE DETAILED EXPERIENCE ----
   experience: [
-    { role: "Vibe Coder", org: "Mercor",  date: "Feb 2026 – Apr 2026", note: "Designed atomic rubrics (8–12 tags) and calibrated prompts to train frontier models on React/HTML/JS web apps. Calibrated task difficulty and validated Vision-Language Models from single-shot screenshots." },
-    { role: "Business Analyst — AI Evaluation",       org: "Turing",  date: "Jan 2026 – Apr 2026", note: "Ran side-by-side evaluations for browser-based AI agents and primary-source hallucination detection, holding 100% guideline adherence across all tasks." },
-    { role: "Reviewer — STEM OCR Specialist",         org: "Mercor",  date: "Feb 2026 – Mar 2026", note: "Validated and repaired math/STEM problem–solution pairs from OCR'd textbooks; standardised LaTeX and checked multi-step Chain-of-Thought solutions." },
-    { role: "Generalist AI Trainer",                  org: "Mercor",  date: "Jan 2026 – Feb 2026", note: "Authored system instructions, multi-turn conversations, and golden responses for RLHF fine-tuning of generalist AI agents." },
-    { role: "Assistant Statistical Officer",          org: "CEGIS · Govt. of Telangana", date: "Aug 2019 – Mar 2025", note: "Led evaluation of state welfare schemes with predictive modelling and architected Telangana's Digital Repository, cutting reporting time by 40%." },
-    { role: "Subject Matter Expert — Statistics",     org: "Chegg",   date: "May 2018 – Nov 2020", note: "Authored detailed university-level statistics and probability solutions with high accuracy ratings." }
+    { 
+      role: "Document Artifact Expert", 
+      org: "AfterQuery Experts · Freelance",  
+      date: "Apr 2026 – May 2026", 
+      note: "• Submitting high-quality document artifacts (PPTX, DOCX, PDF, XLSX) for large-scale AI training data collection.<br>• Sourced structured documents for frontier model development as part of a vetted network of AI evaluation experts.<br>• Applied domain expertise in data science, evaluation, and document standards to ensure artifact quality and instructional alignment." 
+    },
+    { 
+      role: "Business Analyst — AI Evaluation", 
+      org: "Turing",  
+      date: "Jan 2026 – Apr 2026", 
+      note: "• Executed Side-by-Side (SxS) evaluations for Browser-Based AI Agents, assessing Navigation, Interaction, and Efficiency.<br>• Conducted rigorous Fact-Checking to validate information and identify hallucinations without reliance on LLMs.<br>• Provided detailed, structured justifications for ratings (Completion, Factual Accuracy, AI Performance) to support model improvements.<br>• Maintained 100% adherence to strict evaluation guidelines while utilizing browser-based tools and extensions." 
+    },
+    { 
+      role: "Vibe Coder", 
+      org: "Mercor · Freelance",  
+      date: "Feb 2026 – Mar 2026", 
+      note: "• Spearheading the Vibe Coding Project to train models in building client-side web applications (React/HTML/JS).<br>• Designing high-quality Prompts and Atomic Rubrics (8–12 tags) to teach models real-world skills like state management, event handling, and layout correctness.<br>• Calibrating task difficulty to ensure model pass rates align with intended complexity (Easy: 70–100%, Medium: 40–70%, Hard: 0–40%).<br>• Generating metadata and validating Vision-Language Models using single-shot screenshots and code inspection." 
+    },
+    { 
+      role: "Reviewer — STEM OCR Specialist", 
+      org: "Mercor · Freelance",  
+      date: "Feb 2026 – Mar 2026", 
+      note: "• Validating and repairing math/STEM problem-solution pairs extracted via OCR from textbook PDFs, ensuring 100% alignment with source material.<br>• Standardizing complex LaTeX formatting for symbols, subscripts, and multi-step equations to ensure accurate rendering for AI training datasets.<br>• Reformulating demonstrative content and \"not self-contained\" problems into structured QA pairs to improve model instruction adherence.<br>• Assessing the logical consistency and completeness of multi-step mathematical reasoning, including proof-based exercises and Chain-of-Thought (CoT) solutions." 
+    },
+    { 
+      role: "Generalist AI Trainer", 
+      org: "Mercor",  
+      date: "Jan 2026 – Feb 2026", 
+      note: "• Developed complex System Instructions (SI) and multi-turn conversations to train Generalist AI agents.<br>• Implemented Structural & Behavioral Constraints (e.g., JSON format, Persona, Tone) to test model adherence.<br>• Authored \"Golden Responses\" demonstrating perfect instruction adherence for RLHF fine-tuning.<br>• Managed prompt creation across domains (Finance, Coding, Generalist) ensuring diversity in training data." 
+    },
+    { 
+      role: "Cricket Domain Expert (Live Sports Evaluation)", 
+      org: "Mercor · Freelance",  
+      date: "Dec 2025 – Jan 2026", 
+      note: "• Executed live, dynamic evaluation of AI systems (Google AIM vs. ChatGPT) by generating authentic, game-aware queries during live Cricket matches.<br>• Engineered high-complexity prompts covering Betting Markets, Fantasy Leagues, Historical Stats, and Player Profiles to test model hallucinations in real-time.<br>• Authored detailed, objective justifications (in professional 3rd-person tone) assessing model performance based on Factuality, Helpfulness, and Instruction Adherence.<br>• Validated AI responses against live broadcast data to identify inconsistencies in score reporting and momentum-based analysis." 
+    },
+    { 
+      role: "STEM Evaluator — Math (SME)", 
+      org: "Mercor · Freelance",  
+      date: "Nov 2025 – Jan 2026", 
+      note: "• Acting as a STEM SME to evaluate high-complexity mathematical training data for LLM optimization.<br>• Validating Chain of Thought (CoT) reasoning to ensure AI models generate logically sound, step-by-step solutions.<br>• Conducting QA (Quality Assurance) on training datasets, identifying hallucinations, and correcting derivation errors." 
+    },
+    { 
+      role: "Data Annotator & Content Moderator", 
+      org: "Innodata Inc. · Freelance",  
+      date: "Nov 2025 – Dec 2025", 
+      note: "• Executing SFT (Supervised Fine-Tuning) tasks by annotating and labeling large-scale datasets for ML pipelines.<br>• Refining AI-generated text for linguistic fluency, ensuring outputs are free from bias and adhere to PII safety protocols." 
+    },
+    { 
+      role: "Assistant Statistical Officer", 
+      org: "CEGIS · Govt. of Telangana · Full-time", 
+      date: "Aug 2019 – Oct 2025", 
+      note: "• **Statistical Modeling:** Spearheaded the evaluation of state schemes and crop-cutting experiments using predictive modeling to optimize resource allocation.<br>• **Data Management:** Architected Telangana's Digital Repository, processing and cleaning large-scale datasets to improve data accessibility and reduce reporting time by 40%.<br>• **Strategic Analysis:** Conducted comparative interstate analysis for budget assessments, utilizing Time-Series Analysis to identify fiscal trends and drive policy decisions.<br>• **Reporting:** Designed statistical reports and visual dashboards to present complex data insights to non-technical stakeholders." 
+    },
+    { 
+      role: "AI Data Evaluator (Hindi/English)", 
+      org: "OneForma · Freelance",  
+      date: "Jun 2024 – Aug 2024", 
+      note: "• Executed RLHF Comparative Ranking tasks, conducting Side-by-Side (SBS) evaluations of AI responses.<br>• Rated prompts and outputs (Model A vs. Model B) based on accuracy and cultural nuance in Hindi and English.<br>• Provided linguistic feedback to improve the natural language understanding (NLU) of conversational AI models." 
+    },
+    { 
+      role: "Prompt Engineer", 
+      org: "Soul AI · Freelance",  
+      date: "Mar 2024 – May 2024", 
+      note: "• Engineered and refined prompts to facilitate RLHF training for coding and reasoning models.<br>• Reviewed model outputs for technical accuracy, directly contributing to the reduction of model error rates." 
+    },
+    { 
+      role: "Subject Matter Expert — Statistics", 
+      org: "Chegg Inc. · Part-time",   
+      date: "May 2018 – Nov 2020", 
+      note: "• Authored detailed, step-by-step solutions for advanced Statistics and Probability problems to aid student learning.<br>• Maintained high accuracy rates while adhering to strict academic formatting guidelines, similar to current SFT standards.<br>• Demonstrated ability to work independently in a remote, high-volume environment." 
+    }
   ],
 
-  // ---- RESEARCH PROJECTS ----
+  // ---- RESEARCH PROJECTS WITH DYNAMIC IMAGES ----
   projects: [
     { title: "Bilingual Sentiment Evaluation", tag: "NLP · Python · LLM", blurb: "Empirical comparison of lexicon-based vs. LLM sentiment classification on 64 bilingual Hindi-English Instagram comments (41.4M aggregate views). Found 39.1% disagreement rate — rising to 57% on Hindi-dense content — with structural implications for multilingual RLHF.", link: "https://github.com/K-Sriharika/Instagram-sentiment-analysis", image: "images/Instagram Project.png" },
-    { title: "Telangana Digital Repository",    tag: "Statistics · Predictive Modelling", blurb: "Architected a state-government data repository and predictive-modelling workflow to evaluate welfare schemes, cutting reporting time by 40% and supporting interstate time-series policy analysis.", link: "", image: "" },
-    { title: "RLHF Rubric & Calibration",       tag: "AI Evaluation · Rubric Design", blurb: "Built atomic 8–12 tag rubrics and difficulty-calibrated prompts (Easy 70–100% / Medium 40–70% / Hard 0–40%) to train and validate frontier code-generation and Vision-Language models.", link: "", image: "" }
+    { title: "Telangana Digital Repository",    tag: "Statistics · Predictive Modelling", blurb: "Architected a state-government data repository and predictive-modelling workflow to evaluate welfare schemes, cutting reporting time by 40% and supporting interstate time-series policy analysis.", link: "", image: "images/Telangana Digital Repository.png" },
+    { title: "RLHF Rubric & Calibration",       tag: "AI Evaluation · Rubric Design", blurb: "Built atomic 8–12 tag rubrics and difficulty-calibrated prompts (Easy 70–100% / Medium 40–70% / Hard 0–40%) to train and validate frontier code-generation and Vision-Language models.", link: "", image: "images/RLHF Rubric.png" }
   ],
 
-  // ---- VIBE CODING PROJECTS (interactive builds — add live link: for each) ----
-  // To link a project: set link: "https://your-live-url-here"
+  // ---- VIBE CODING PROJECTS (interactive builds) ----
   vibeCoding: [
     { title: "Coin Toss Probability Simulator", tag: "Statistics · Monte Carlo", desc: "Monte Carlo simulation in your browser — flip a coin, track outcomes, watch the running % converge toward 50%.", img: "images/Coin Toss Probability Simulator.png",       link: "coin-toss.html" },
     { title: "Concave Mirror Simulator",        tag: "Physics · Optics",         desc: "Drag the light source — real-time ray tracing with mirror formula, magnification, and image-nature computation.", img: "images/Concave Mirror.png",  link: "concave-mirror.html" },
@@ -89,9 +154,9 @@ const PORTFOLIO = {
     { label: "Resume",      sub: "Download PDF →",       href: "https://drive.google.com/file/d/194Faz0tYrIK1fL9vgQACQ9Cinz2VERCY/view?usp=sharing",                                                   big: false }
   ],
 
-  // ---- RATE CARD  ⚠️ SET YOUR REAL NUMBERS ----
+  // ---- RATE CARD ----
   rateNote: "Flexible across PST / EST / UTC. Reach out for project-based or retainer arrangements.",
-  introCallRate: "₹ 250 / 30 min",   // ← set your intro-call rate
+  introCallRate: "₹ 250 / 30 min",
   rates: [
     { plan: "Hourly",    price: "$30 / hr",     detail: "AI evaluation, SxS ranking, hallucination detection, rubric review." },
     { plan: "Project",   price: "from $1200",    detail: "Scoped evaluation studies, rubric design, RLHF/SFT data authoring.", featured: true },
@@ -101,8 +166,8 @@ const PORTFOLIO = {
   connectNote: "I prefer sharing details 1-on-1. Reach out via email or LinkedIn and let's start a conversation — whether it's a full-time role, a project, or a quick question.",
   connectEmail:    "harika21k@gmail.com",
   connectLinkedIn: "https://linkedin.com/in/sriharika-k",
-  // Optional: Calendly or similar booking link
-  bookingLink:     ""   // e.g. "https://calendly.com/your-link"
+  phone:           "+91 6378264814", // ⚠️ CHANGE THIS placeholder to your real phone number
+  bookingLink:     ""
 };
 </script>
 
@@ -168,23 +233,36 @@ nav .wrap{display:flex; align-items:center; justify-content:space-between; heigh
 .nav-cta:hover{border-color:var(--accent); color:var(--accent)}
 @media(max-width:720px){.navlinks{display:none}}
 
-/* ---------- HERO ---------- */
+/* ---------- HERO LAYOUT (Two-column grid split) ---------- */
 header{padding:clamp(60px,10vw,120px) 0 60px}
+.hero-container {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 48px;
+  align-items: center;
+}
+.hero-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
 .hero-photo{
-  width:100px; height:100px; border-radius:50%;
-  overflow:hidden; border:2px solid var(--accent);
-  box-shadow:0 0 0 5px var(--accent-soft), 0 8px 30px rgba(0,0,0,.4);
-  margin-bottom:26px;
+  width: 320px;
+  height: 320px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 0 6px var(--accent-soft), 0 16px 40px rgba(0,0,0,.5);
 }
 .hero-photo img{width:100%; height:100%; object-fit:cover; object-position:center top}
 .hero-loc{font-family:var(--mono); font-size:13px; color:var(--muted); margin-bottom:22px}
 .hero-loc::before{content:"◦ "; color:var(--accent)}
 h1.hero{
   font-family:var(--serif); font-weight:900; letter-spacing:-.025em; line-height:1.02;
-  font-size:clamp(38px,7vw,78px); max-width:14ch; margin-bottom:24px;
+  font-size:clamp(32px,5.5vw,68px); max-width:16ch; margin-bottom:24px;
 }
 h1.hero em{font-style:italic; color:var(--accent); font-weight:500}
-.hero-sub{font-size:clamp(16px,2vw,20px); color:var(--muted); max-width:60ch; margin-bottom:32px; line-height:1.55}
+.hero-sub{font-size:clamp(16px,1.8vw,19px); color:var(--muted); max-width:54ch; margin-bottom:32px; line-height:1.55}
 .btns{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:24px}
 .btn{
   font-family:var(--mono); font-size:14px; padding:14px 26px; border-radius:100px;
@@ -213,7 +291,22 @@ h1.hero em{font-style:italic; color:var(--accent); font-weight:500}
 .stat{background:var(--surface); padding:28px 24px}
 .stat .v{font-family:var(--serif); font-weight:900; font-size:clamp(28px,3.8vw,42px); letter-spacing:-.02em}
 .stat .l{font-size:13px; color:var(--muted); margin-top:6px; line-height:1.35}
-@media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+@media(max-width:820px){
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .hero-right {
+    justify-content: flex-start;
+    order: -1; /* Puts photo on top on mobile screens */
+  }
+  .hero-photo {
+    width: 240px;
+    height: 240px;
+  }
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
 
 /* ---------- SECTIONS ---------- */
 section{padding:clamp(60px,8vw,100px) 0; border-top:1px solid var(--line)}
@@ -251,7 +344,9 @@ section{padding:clamp(60px,8vw,100px) 0; border-top:1px solid var(--line)}
 .proj-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
 .proj{background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; transition:transform .25s,border-color .25s}
 .proj.clickable:hover{transform:translateY(-6px); border-color:var(--line-strong)}
-.proj-img{aspect-ratio:16/10; background:radial-gradient(circle at 30% 30%,rgba(205,255,77,.14),transparent 55%),var(--surface-2); display:flex; align-items:center; justify-content:center; border-bottom:1px solid var(--line)}
+.proj-img{aspect-ratio:16/10; background:radial-gradient(circle at 30% 30%,rgba(205,255,77,.14),transparent 55%),var(--surface-2); display:flex; align-items:center; justify-content:center; border-bottom:1px solid var(--line); position:relative; overflow:hidden;}
+.proj-img img{width:100%; height:100%; object-fit:cover; transition:transform .3s ease;}
+.proj.clickable:hover .proj-img img{transform:scale(1.05);}
 .proj-img .ph{font-family:var(--mono); font-size:38px; color:rgba(205,255,77,.5)}
 .proj-body{padding:22px; display:flex; flex-direction:column; flex:1}
 .proj-tag{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:10px}
@@ -433,7 +528,7 @@ section::before {
 .sec-light .rate .badge       { background: #D4A000; color: #fff; }
 .sec-light .kicker            { color: #C06800; }
 .sec-light .kicker::before    { background: #C06800; }
-.sec-light .sec-head h2       { color: #1A1820; }
+.sec-head h2       { color: #1A1820; }
 
 /* ===== HERO NAME + SOCIAL ICONS ===== */
 .hero-name {
@@ -509,24 +604,30 @@ body::after {
 </nav>
 
 <header>
-  <div class="wrap">
-    <div class="hero-name reveal d1" id="heroName"></div>
-    <div class="hero-socials reveal d1">
-      <a class="social-btn" href="https://linkedin.com/in/sriharika-k" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-        LinkedIn
-      </a>
-      <a class="social-btn" href="https://github.com/K-Sriharika" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-        GitHub
-      </a>
+  <div class="wrap hero-container">
+    <div class="hero-left">
+      <div class="hero-name reveal d1" id="heroName"></div>
+      <div class="hero-socials reveal d1">
+        <a class="social-btn" href="https://linkedin.com/in/sriharika-k" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+        <a class="social-btn" href="https://github.com/K-Sriharika" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+      <div class="hero-loc reveal d2" id="heroLoc"></div>
+      <h1 class="hero reveal d3" id="heroHeadline"></h1>
+      <p class="hero-sub reveal d4" id="heroSub"></p>
+      <div class="btns reveal d5" id="heroBtns"></div>
+      <div class="avail-wrap reveal d6" id="availBadges"></div>
     </div>
-    <div class="hero-photo reveal d1"><img id="heroPhoto" src="" alt="K. Sriharika"></div>
-    <div class="hero-loc reveal d2" id="heroLoc"></div>
-    <h1 class="hero reveal d3" id="heroHeadline"></h1>
-    <p class="hero-sub reveal d4" id="heroSub"></p>
-    <div class="btns reveal d5" id="heroBtns"></div>
-    <div class="avail-wrap reveal d6" id="availBadges"></div>
+    <div class="hero-right">
+      <div class="hero-photo reveal d1"><img id="heroPhoto" src="" alt="K. Sriharika"></div>
+    </div>
+  </div>
+  <div class="wrap">
     <div class="stats reveal" style="animation-delay:.65s" id="statStrip"></div>
   </div>
 </header>
@@ -775,6 +876,23 @@ ctas.appendChild(callBtn);
 const liBtn = el("a","cc-btn",`<span class="cc-icon">💼</span><div class="cc-text"><div class="cc-label">Connect on LinkedIn</div><div class="cc-sub">sriharika-k</div></div><span class="cc-arr">↗</span>`);
 liBtn.href = PORTFOLIO.connectLinkedIn; liBtn.target = "_blank";
 ctas.appendChild(liBtn);
+
+// Phone (Click to Reveal)
+const phoneBtn = el("div","cc-btn",`<span class="cc-icon">📱</span><div class="cc-text"><div class="cc-label">Call / WhatsApp</div><div class="cc-sub" id="revealPhone">Click to reveal phone number</div></div><span class="cc-arr" id="phoneArr">→</span>`);
+phoneBtn.style.cursor = "pointer";
+phoneBtn.addEventListener("click", function() {
+  const sub = $("#revealPhone");
+  if (sub.textContent === "Click to reveal phone number") {
+    sub.textContent = PORTFOLIO.phone;
+    sub.style.color = "var(--accent)";
+    $("#phoneArr").innerHTML = "✓";
+  } else {
+    const cleaned = PORTFOLIO.phone.replace(/[^0-9]/g, "");
+    window.open(`https://wa.me/${cleaned}`, "_blank");
+  }
+});
+ctas.appendChild(phoneBtn);
+
 // Email
 const emBtn = el("a","cc-btn",`<span class="cc-icon">✉️</span><div class="cc-text"><div class="cc-label">Send an email</div><div class="cc-sub">${PORTFOLIO.connectEmail}</div></div><span class="cc-arr">→</span>`);
 emBtn.href = `mailto:${PORTFOLIO.connectEmail}`;
