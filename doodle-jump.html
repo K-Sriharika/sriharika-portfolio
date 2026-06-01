@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Doodle Jump Clone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f6f4f0;
+      --device-bg: #e4dfd6;
+      --game-bg: linear-gradient(#fefefe, #e7f3ff);
+      --primary: #3b82f6;
+      --accent: #22c55e;
+      --danger: #ef4444;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --platform: #10b981;
+      --platform-border: #047857;
+      --player-main: #facc15;
+      --player-outline: #b45309;
+      --shadow: rgba(15, 23, 42, 0.18);
+      --radius-lg: 24px;
+      --radius-md: 12px;
+      --radius-sm: 6px;
+      --transition-fast: 150ms ease-out;
+      --game-width: 360px;
+      --game-height: 640px;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background: radial-gradient(circle at top, #e0f2fe 0, #f9fafb 50%, #e5e7eb 100%);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-shell {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .title {
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .device-frame {
+      background: var(--device-bg);
+      padding: 16px 12px;
+      border-radius: 40px;
+      box-shadow: 0 22px 40px var(--shadow);
+      position: relative;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .device-notch {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 96px;
+      height: 8px;
+      background: #111827;
+      border-radius: 999px;
+      opacity: 0.7;
+    }
+
+    .game-window {
+      position: relative;
+      width: var(--game-width);
+      height: var(--game-height);
+      background: var(--game-bg);
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.35);
+      user-select: none;
+      touch-action: none;
+    }
+
+    /* Decorative background doodles */
+    .game-window::before,
+    .game-window::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    .game-window::before {
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, #bfdbfe 0, transparent 70%);
+      top: -60px;
+      left: -60px;
+    }
+
+    .game-window::after {
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, #bbf7d0 0, transparent 70%);
+      bottom: -60px;
+      right: -60px;
+    }
+
+    .game-layer {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .platform {
+      position: absolute;
+      height: 10px;
+      background: var(--platform);
+      border-radius: 20px;
+      border: 2px solid var(--platform-border);
+      box-shadow: 0 3px 0 rgba(15, 118, 110, 0.45);
+    }
+
+    .player {
+      position: absolute;
+      width: 36px;
+      height: 32px;
+      transform-origin: center;
+    }
+
+    .player-body {
+      position: absolute;
+      inset: 0;
+      background: var(--player-main);
+      border-radius: 45% 55% 50% 50%;
+      border: 2px solid var(--player-outline);
+      box-shadow: 0 4px 0 rgba(180, 83, 9, 0.6);
+    }
+
+    .player-eye {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #111827;
+      top: 10px;
+      left: 9px;
+      box-shadow: 10px 0 0 #111827;
+    }
+
+    .player-mouth {
+      position: absolute;
+      width: 12px;
+      height: 6px;
+      border-radius: 999px;
+      border: 2px solid #7c2d12;
+      border-top: none;
+      left: 10px;
+      top: 18px;
+    }
+
+    .player-shadow {
+      position: absolute;
+      width: 24px;
+      height: 8px;
+      background: rgba(15, 23, 42, 0.16);
+      border-radius: 999px;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      filter: blur(1px);
+    }
+
+    .hud {
+      position: absolute;
+      top: 10px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 14px;
+      font-size: 0.85rem;
+      z-index: 10;
+    }
+
+    .score-display {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(6px);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      box-shadow: 0 6px 15px rgba(15, 23, 42, 0.16);
+      font-weight: 600;
+      min-width: 70px;
+      text-align: center;
+    }
+
+    .score-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-right: 4px;
+    }
+
+    .score-value {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hint {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      backdrop-filter: blur(6px);
+    }
+
+    .hint-kbd {
+      border-radius: 4px;
+      padding: 1px 4px;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      font-size: 0.65rem;
+      background: #f9fafb;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .overlay-panel {
+      pointer-events: auto;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 18px 20px 16px;
+      max-width: 260px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.3);
+      text-align: center;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+    }
+
+    .overlay-title {
+      margin: 0 0 6px;
+      font-size: 1.35rem;
+      letter-spacing: 0.04em;
+    }
+
+    .overlay-subtitle {
+      margin: 0 0 12px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .overlay-score {
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+
+    .overlay-score strong {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+        background var(--transition-fast), color var(--transition-fast);
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #22c55e);
+      color: #f9fafb;
+      box-shadow: 0 8px 18px rgba(22, 163, 74, 0.45);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 11px 22px rgba(22, 163, 74, 0.6);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 10px rgba(22, 163, 74, 0.5);
+    }
+
+    .btn-secondary {
+      background: rgba(15, 23, 42, 0.06);
+      color: var(--text-muted);
+      box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(15, 23, 42, 0.1);
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 3px;
+    }
+
+    .overlay-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .overlay-footer {
+      margin-top: 10px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .sr-only {
+      border: 0;
+      clip: rect(0 0 0 0);
+      height: 1px;
+      width: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      position: absolute;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 480px) {
+      :root {
+        --game-width: 320px;
+        --game-height: 560px;
+      }
+
+      .device-frame {
+        transform: scale(0.95);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <h1 class="title">Doodle Jump – Browser Clone</h1>
+
+    <div class="device-frame" role="presentation">
+      <div class="device-notch" aria-hidden="true"></div>
+
+      <div
+        class="game-window"
+        role="application"
+        aria-label="Doodle Jump style game. Use left and right arrow keys to move."
+      >
+        <div class="hud">
+          <div class="score-display" aria-live="polite">
+            <span class="score-label">Score</span>
+            <span class="score-value" id="score">0</span>
+          </div>
+          <div class="hint" aria-hidden="true">
+            <span class="hint-kbd">←</span>
+            <span class="hint-kbd">→</span>
+            <span>Move</span>
+          </div>
+        </div>
+
+        <div class="game-layer" id="game-layer">
+          <!-- Platforms and player are injected here -->
+        </div>
+
+        <div class="overlay" id="overlay-start">
+          <div class="overlay-panel">
+            <h2 class="overlay-title">Jump Up!</h2>
+            <p class="overlay-subtitle">
+              Use your arrow keys to bounce from platform to platform. Don't fall off the bottom.
+            </p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" id="btn-start">Start Game</button>
+              <button class="btn btn-secondary" id="btn-focus">Focus game window</button>
+            </div>
+            <p class="overlay-footer">Tip: The world scrolls with you. How high can you climb?</p>
+          </div>
+        </div>
+
+        <div class="overlay hidden" id="overlay-gameover" aria-live="assertive">
+          <div class="overlay-panel">
+            <h2 class="overlay-title" id="gameover-title">Game Over</h2>
+            <p class="overlay-score">
+              Final score: <strong id="final-score">0</strong>
+            </p>
+            <p class="overlay-subtitle">Press restart to try again from the bottom.</p>
+            <div class="overlay-actions">
+              <button class="btn btn-primary" id="btn-restart">Restart</button>
+              <button class="btn btn-secondary" id="btn-restart-focus">Restart &amp; focus</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="sr-only" id="instructions">
+      Use the left and right arrow keys to move. The character jumps automatically. Land on platforms to keep climbing.
+      If you fall below the bottom of the game area, the game ends.
+    </p>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const gameLayer = document.getElementById("game-layer");
+      const scoreEl = document.getElementById("score");
+      const overlayStart = document.getElementById("overlay-start");
+      const overlayGameOver = document.getElementById("overlay-gameover");
+      const btnStart = document.getElementById("btn-start");
+      const btnFocus = document.getElementById("btn-focus");
+      const btnRestart = document.getElementById("btn-restart");
+      const btnRestartFocus = document.getElementById("btn-restart-focus");
+      const finalScoreEl = document.getElementById("final-score");
+
+      const gameWindow = document.querySelector(".game-window");
+      const rect = () => gameWindow.getBoundingClientRect();
+
+      // Physics & game configuration
+      const GRAVITY = 0.28; // downward
+      const JUMP_VELOCITY = -8.8; // upward impulse
+      const HORIZONTAL_SPEED = 3.2;
+      const MAX_PLATFORMS = 14;
+      const PLATFORM_MIN_GAP = 38;
+      const PLATFORM_MAX_GAP = 76;
+      const PLATFORM_MIN_WIDTH = 55;
+      const PLATFORM_MAX_WIDTH = 90;
+      const CAMERA_THRESHOLD = 0.4; // fraction of height from top before camera starts following
+
+      let width = rect().width;
+      let height = rect().height;
+
+      // Game state
+      let platforms = [];
+      let player = null;
+      let cameraY = 0; // how far world has scrolled up
+      let maxHeightReached = 0; // track highest position for scoring
+      let keys = { left: false, right: false };
+      let running = false;
+      let lastTime = null;
+
+      function createPlayer() {
+        const el = document.createElement("div");
+        el.className = "player";
+        el.innerHTML = `
+          <div class="player-body"></div>
+          <div class="player-eye"></div>
+          <div class="player-mouth"></div>
+          <div class="player-shadow"></div>
+        `;
+        gameLayer.appendChild(el);
+
+        const startX = width / 2 - 18;
+        const startY = height * 0.25; // appear slightly below top quarter
+
+        player = {
+          el,
+          x: startX,
+          y: startY,
+          width: 36,
+          height: 32,
+          vy: JUMP_VELOCITY, // start moving upward
+        };
+
+        updatePlayerElement();
+      }
+
+      function createPlatform(x, y, w) {
+        const el = document.createElement("div");
+        el.className = "platform";
+        el.style.width = `${w}px`;
+        gameLayer.appendChild(el);
+        const platform = { el, x, y, width: w, height: 10 };
+        platforms.push(platform);
+        updatePlatformElement(platform);
+        return platform;
+      }
+
+      function clearPlatforms() {
+        platforms.forEach((p) => p.el.remove());
+        platforms = [];
+      }
+
+      function layoutInitialPlatforms() {
+        clearPlatforms();
+
+        const baseY = height - 30;
+        const baseW = 85;
+        createPlatform(width / 2 - baseW / 2, baseY, baseW);
+
+        let currentY = baseY - 60;
+        const cols = [width * 0.15, width * 0.4, width * 0.65];
+
+        // Create at least 8 initial platforms
+        for (let i = 0; i < 10; i++) {
+          const w = randRange(PLATFORM_MIN_WIDTH, PLATFORM_MAX_WIDTH);
+          const xChoice = cols[Math.floor(Math.random() * cols.length)];
+          const jitter = randRange(-20, 20);
+          const x = clamp(xChoice + jitter, 10, width - w - 10);
+          createPlatform(x, currentY, w);
+          currentY -= randRange(PLATFORM_MIN_GAP, PLATFORM_MAX_GAP);
+        }
+      }
+
+      function updatePlatformElement(p) {
+        const visibleY = p.y + cameraY;
+        p.el.style.transform = `translate(${p.x}px, ${visibleY}px)`;
+      }
+
+      function updatePlayerElement() {
+        const visibleY = player.y + cameraY;
+        player.el.style.transform = `translate(${player.x}px, ${visibleY}px)`;
+
+        if (player.vy < 0) {
+          player.el.style.transform += " scaleY(1.03)";
+        } else if (player.vy > 1) {
+          player.el.style.transform += " scaleY(0.97)";
+        }
+
+        // Slight tilt based on horizontal movement
+        let tilt = 0;
+        if (keys.left && !keys.right) tilt = -6;
+        if (keys.right && !keys.left) tilt = 6;
+        player.el.style.transform += ` rotate(${tilt}deg)`;
+      }
+
+      function randRange(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      function clamp(v, min, max) {
+        return v < min ? min : v > max ? max : v;
+      }
+
+      function resetGameState() {
+        width = rect().width;
+        height = rect().height;
+
+        cameraY = 0;
+        maxHeightReached = 0;
+        scoreEl.textContent = "0";
+
+        if (player && player.el) {
+          player.el.remove();
+        }
+
+        layoutInitialPlatforms();
+        createPlayer();
+
+        // Place player just above the lowest platform
+        const basePlatform = platforms.reduce((a, b) => (a.y > b.y ? a : b));
+        player.x = basePlatform.x + basePlatform.width / 2 - player.width / 2;
+        player.y = basePlatform.y - player.height;
+        player.vy = JUMP_VELOCITY;
+        updatePlayerElement();
+
+        running = false;
+        lastTime = null;
+      }
+
+      function startGame() {
+        if (running) return;
+        running = true;
+        overlayStart.classList.add("hidden");
+        overlayGameOver.classList.add("hidden");
+        lastTime = performance.now();
+        requestAnimationFrame(loop);
+        gameWindow.focus({ preventScroll: true });
+      }
+
+      function gameOver() {
+        running = false;
+        overlayGameOver.classList.remove("hidden");
+        finalScoreEl.textContent = scoreEl.textContent;
+      }
+
+      function updateScore() {
+        const heightTraveled = Math.max(0, maxHeightReached - player.y);
+        const score = Math.floor(heightTraveled);
+        scoreEl.textContent = String(score);
+      }
+
+      function spawnPlatformsIfNeeded() {
+        // Find highest platform (lowest y value, because y grows downward)
+        let highest = Infinity;
+        platforms.forEach((p) => {
+          if (p.y < highest) highest = p.y;
+        });
+
+        // Ensure platforms extend above by at least 1.5 screen heights
+        while (highest > -height * 1.2) {
+          const gap = randRange(PLATFORM_MIN_GAP, PLATFORM_MAX_GAP);
+          const newY = highest - gap;
+          const w = randRange(PLATFORM_MIN_WIDTH, PLATFORM_MAX_WIDTH);
+          const x = randRange(10, width - w - 10);
+          createPlatform(x, newY, w);
+          highest = newY;
+        }
+
+        // Remove platforms that are far below view
+        const cutoff = height + 80 - cameraY;
+        platforms = platforms.filter((p) => {
+          if (p.y > cutoff) {
+            p.el.remove();
+            return false;
+          }
+          return true;
+        });
+      }
+
+      function updatePhysics(dt) {
+        // Horizontal movement
+        let vx = 0;
+        if (keys.left) vx -= HORIZONTAL_SPEED;
+        if (keys.right) vx += HORIZONTAL_SPEED;
+        player.x += vx * dt * 60; // normalize to 60fps
+
+        // Screen wrap
+        if (player.x + player.width < 0) {
+          player.x = width;
+        } else if (player.x > width) {
+          player.x = -player.width;
+        }
+
+        // Gravity
+        player.vy += GRAVITY * dt * 60;
+        player.y += player.vy * dt * 60;
+
+        // Track highest point reached
+        if (player.y < maxHeightReached) {
+          maxHeightReached = player.y;
+        }
+
+        // Collision with platforms (only when falling)
+        if (player.vy > 0) {
+          const pxCenter = player.x + player.width / 2;
+          const pyBottom = player.y + player.height;
+
+          for (const p of platforms) {
+            const platformTop = p.y;
+            const platformLeft = p.x;
+            const platformRight = p.x + p.width;
+
+            const wasAbove = pyBottom - player.vy * dt * 60 <= platformTop;
+            const isNowOnOrBelow = pyBottom >= platformTop && pyBottom <= platformTop + p.height + 8;
+
+            if (
+              wasAbove &&
+              isNowOnOrBelow &&
+              pxCenter >= platformLeft &&
+              pxCenter <= platformRight
+            ) {
+              player.y = platformTop - player.height;
+              player.vy = JUMP_VELOCITY;
+              break;
+            }
+          }
+        }
+
+        // Camera follow: move world down when player goes above threshold
+        const visibleY = player.y + cameraY;
+        const thresholdY = height * CAMERA_THRESHOLD;
+        if (visibleY < thresholdY) {
+          const delta = thresholdY - visibleY;
+          cameraY += delta;
+        }
+
+        // Game over if player leaves bottom of screen
+        if (player.y + cameraY > height + 40) {
+          gameOver();
+        }
+
+        updateScore();
+        spawnPlatformsIfNeeded();
+      }
+
+      function render() {
+        updatePlayerElement();
+        platforms.forEach(updatePlatformElement);
+      }
+
+      function loop(timestamp) {
+        if (!running) return;
+
+        const dt = Math.min(0.033, (timestamp - lastTime) / 1000); // cap dt at ~30 fps
+        lastTime = timestamp;
+
+        updatePhysics(dt);
+        render();
+
+        requestAnimationFrame(loop);
+      }
+
+      // Event listeners
+      window.addEventListener("resize", () => {
+        // Keep relative layout when window resizes (simple re-init)
+        resetGameState();
+      });
+
+      function handleKeyDown(e) {
+        if (e.key === "ArrowLeft") {
+          keys.left = true;
+          e.preventDefault();
+        } else if (e.key === "ArrowRight") {
+          keys.right = true;
+          e.preventDefault();
+        } else if (e.key === " " || e.key === "Enter") {
+          // Space / Enter to start or restart
+          if (!running) {
+            if (!overlayStart.classList.contains("hidden")) startGame();
+            else if (!overlayGameOver.classList.contains("hidden")) {
+              resetGameState();
+              startGame();
+            }
+            e.preventDefault();
+          }
+        }
+      }
+
+      function handleKeyUp(e) {
+        if (e.key === "ArrowLeft") {
+          keys.left = false;
+          e.preventDefault();
+        } else if (e.key === "ArrowRight") {
+          keys.right = false;
+          e.preventDefault();
+        }
+      }
+
+      gameWindow.tabIndex = 0; // focusable for keyboard
+      gameWindow.addEventListener("keydown", handleKeyDown);
+      gameWindow.addEventListener("keyup", handleKeyUp);
+
+      btnStart.addEventListener("click", () => {
+        startGame();
+      });
+
+      btnFocus.addEventListener("click", () => {
+        gameWindow.focus({ preventScroll: true });
+      });
+
+      btnRestart.addEventListener("click", () => {
+        resetGameState();
+        startGame();
+      });
+
+      btnRestartFocus.addEventListener("click", () => {
+        resetGameState();
+        startGame();
+        gameWindow.focus({ preventScroll: true });
+      });
+
+      // Initialize once DOM is ready
+      resetGameState();
+    })();
+  </script>
+</body>
+</html>
+  

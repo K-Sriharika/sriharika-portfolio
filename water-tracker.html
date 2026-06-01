@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hydration Tracker - Water Bottle Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- React and ReactDOM from CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <style>
+    :root {
+      --bottle-bg: #e4f5ff;
+      --bottle-border: #9bc7e6;
+      --accent: #1a73e8;
+      --accent-soft: #c5ddff;
+      --text-main: #13314d;
+      --text-muted: #5b6c80;
+      --panel-bg: #f9fcff;
+      --control-bg: rgba(255, 255, 255, 0.86);
+      --human-outline: #2b4c73;
+      --water-fill: #39a9ff;
+      --water-fill-soft: #7ed3ff;
+      --shadow-soft: 0 14px 30px rgba(15, 54, 90, 0.18);
+      --radius-bottle: 40px;
+      --transition-fast: 0.25s ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #e2f1ff 0, #d4ecff 40%, #edf7ff 100%);
+      color: var(--text-main);
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #root {
+      width: 100%;
+      max-width: 1080px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bottle-shell {
+      position: relative;
+      width: 100%;
+      max-width: 940px;
+      height: 520px; /* Fixed so everything fits without scrolling */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Bottle shape: body + neck + cap */
+    .bottle-body {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, #f4fbff 0%, var(--bottle-bg) 40%, #f5fbff 100%);
+      border-radius: var(--radius-bottle);
+      border: 2px solid var(--bottle-border);
+      box-shadow: var(--shadow-soft);
+      padding: 88px 42px 40px 42px; /* leave space for neck & cap */
+      overflow: hidden;
+    }
+
+    .bottle-neck {
+      position: absolute;
+      top: -46px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 160px;
+      height: 70px;
+      background: linear-gradient(180deg, #f8fbff 0%, #e5f2ff 100%);
+      border-radius: 999px 999px 40px 40px;
+      border: 2px solid var(--bottle-border);
+      border-bottom: none;
+      box-shadow: 0 10px 18px rgba(65, 120, 173, 0.2);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 4px;
+    }
+
+    .bottle-neck-inner-line {
+      width: 74%;
+      height: 5px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #d3e3ff, #b7cdf2);
+    }
+
+    .bottle-cap {
+      position: absolute;
+      top: -78px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 34px;
+      background: linear-gradient(180deg, #4c8fe5 0%, #2464c4 100%);
+      border-radius: 999px 999px 32px 32px;
+      box-shadow: 0 9px 14px rgba(23, 72, 138, 0.45);
+      border: 2px solid #2058a3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bottle-cap-ridges {
+      width: 70%;
+      height: 40%;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 3px;
+    }
+
+    .bottle-cap-ridges span {
+      display: block;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(0, 0, 0, 0.02));
+      opacity: 0.9;
+    }
+
+    .dashboard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+      gap: 32px;
+      align-items: stretch;
+    }
+
+    /* LEFT: CONTROLS */
+    .control-panel {
+      background: var(--control-bg);
+      border-radius: 26px;
+      border: 1px solid rgba(155, 199, 230, 0.7);
+      box-shadow: 0 10px 24px rgba(58, 118, 173, 0.12);
+      padding: 22px 22px 20px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+
+    .control-header {
+      margin-bottom: 14px;
+    }
+
+    .control-header h1 {
+      margin: 0 0 8px 0;
+      font-size: 1.35rem;
+      line-height: 1.25;
+      letter-spacing: 0.01em;
+    }
+
+    .control-header p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .field-group {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: nowrap;
+    }
+
+    .field-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .field-control {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .numeric-input {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid #c5d9f0;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      outline: none;
+      background: #fdfefe;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+    }
+
+    .numeric-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.25);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      transition: background-color var(--transition-fast),
+                  box-shadow var(--transition-fast),
+                  transform 0.06s ease-out;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2f80ed, #1a73e8);
+      color: #fff;
+      box-shadow: 0 7px 16px rgba(26, 115, 232, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #266fe0, #1559b8);
+      box-shadow: 0 9px 20px rgba(26, 115, 232, 0.55);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #eef4ff;
+      color: var(--text-main);
+      border: 1px solid #d0dcf2;
+      box-shadow: 0 4px 10px rgba(150, 174, 210, 0.25);
+    }
+
+    .btn-secondary:hover {
+      background: #e2ecff;
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .btn-disabled,
+    .btn-disabled:hover {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .summary-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      align-items: baseline;
+      margin-bottom: 4px;
+      font-size: 0.92rem;
+    }
+
+    .summary-row strong {
+      font-size: 1.12rem;
+      letter-spacing: 0.01em;
+    }
+
+    .summary-label {
+      color: var(--text-muted);
+    }
+
+    .goal-row {
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: linear-gradient(90deg, #edf4ff, #e0f4ff);
+      border: 1px solid rgba(170, 205, 240, 0.9);
+      font-size: 0.87rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .goal-row span {
+      white-space: nowrap;
+    }
+
+    .goal-indicator {
+      flex: 1;
+      height: 6px;
+      border-radius: 999px;
+      background: #cfe2ff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .goal-indicator-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #3a8bfd, #51c6ff);
+      transition: width var(--transition-fast);
+    }
+
+    .footnote {
+      margin-top: 10px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* RIGHT: VISUALIZATION */
+    .visual-panel {
+      background: var(--panel-bg);
+      border-radius: 26px;
+      border: 1px solid rgba(155, 199, 230, 0.8);
+      box-shadow: 0 10px 26px rgba(58, 118, 173, 0.16);
+      padding: 18px 18px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .visual-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+      gap: 10px;
+    }
+
+    .visual-header-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .visual-header-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .humans-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 4px;
+      overflow: hidden; /* ensure no scrolling */
+    }
+
+    .humans-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 16px;
+      max-width: 100%;
+    }
+
+    .human-container {
+      width: 110px;
+      max-width: 16vw;
+      aspect-ratio: 7 / 15;
+      position: relative;
+    }
+
+    .human-shape {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 10%, rgba(255, 255, 255, 0.9), rgba(248, 252, 255, 1));
+      border: 2px solid var(--human-outline);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+        0 10px 20px rgba(19, 55, 93, 0.25);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Human silhouette mask using ::before for body and head */
+    .human-silhouette {
+      position: absolute;
+      inset: 10% 18% 8% 18%;
+      border-radius: 40px;
+      background: transparent;
+      border: 2px solid rgba(43, 76, 115, 0.8);
+      box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.45);
+      overflow: hidden;
+    }
+
+    .human-silhouette::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -22%;
+      width: 52%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      border: 2px solid rgba(43, 76, 115, 0.9);
+      background: radial-gradient(circle at 30% 25%, #ffffff, #ccd8ea);
+      box-shadow:
+        0 4px 0 rgba(179, 197, 224, 0.9),
+        inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+    }
+
+    /* Water fill inside human */
+    .human-water {
+      position: absolute;
+      left: 7%;
+      right: 7%;
+      bottom: 6%;
+      height: 0%; /* dynamic */
+      border-radius: 24px 24px 18px 18px;
+      background:
+        linear-gradient(180deg, rgba(126, 211, 255, 0.85), rgba(57, 169, 255, 0.95)),
+        radial-gradient(circle at 20% 0, rgba(255, 255, 255, 0.55), transparent 60%);
+      box-shadow:
+        inset 0 6px 10px rgba(255, 255, 255, 0.9),
+        0 -4px 10px rgba(1, 66, 133, 0.3);
+      overflow: hidden;
+      transition: height 0.35s ease-out;
+    }
+
+    /* moving subtle wave highlights */
+    .human-water::after {
+      content: "";
+      position: absolute;
+      left: -30%;
+      right: -30%;
+      height: 16px;
+      top: 10px;
+      background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.9), transparent 55%);
+      opacity: 0.8;
+      mix-blend-mode: screen;
+      animation: wave 4s linear infinite;
+    }
+
+    @keyframes wave {
+      0% { transform: translateX(-12%); }
+      50% { transform: translateX(18%); }
+      100% { transform: translateX(-12%); }
+    }
+
+    .human-percentage-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #123150;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+      pointer-events: none;
+    }
+
+    .human-caption {
+      margin-top: 4px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .visual-footer {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .visual-footer span {
+      white-space: nowrap;
+    }
+
+    .visual-footer-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 880px) {
+      .bottle-body {
+        padding: 86px 26px 32px 26px;
+      }
+
+      .dashboard-inner {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1.2fr) minmax(0, 1.4fr);
+        row-gap: 18px;
+      }
+
+      .control-panel,
+      .visual-panel {
+        padding: 18px 16px 16px 16px;
+      }
+
+      .control-header h1 {
+        font-size: 1.18rem;
+      }
+
+      .humans-row {
+        gap: 12px;
+      }
+
+      .human-container {
+        max-width: 22vw;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .bottle-shell {
+        max-width: 420px;
+        height: 540px;
+      }
+
+      .bottle-body {
+        padding: 82px 18px 26px 18px;
+      }
+
+      .field-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .button-group {
+        justify-content: flex-start;
+      }
+
+      .visual-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .humans-row {
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root" aria-hidden="false"></div>
+
+  <script>
+    const { useState, useMemo } = React;
+
+    const DAILY_GOAL = 5.0; // liters per person
+    const HUMAN_CAPACITY = 5.0; // liters per human silhouette
+
+    function clampNumber(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function formatLiters(value) {
+      return value.toFixed(1) + " L";
+    }
+
+    function formatProgress(current, goal) {
+      return `${current.toFixed(1)} of ${goal.toFixed(1)} filled`;
+    }
+
+    function Human({ index, filledPortion }) {
+      // filledPortion is between 0 and 1
+      const percentage = Math.round(filledPortion * 100);
+      const heightPercent = clampNumber(percentage, 0, 100);
+
+      return (
+        React.createElement("div", { className: "human-container", "aria-hidden": "true" },
+          React.createElement("div", { className: "human-shape" },
+            React.createElement("div", { className: "human-silhouette" },
+              React.createElement("div", {
+                className: "human-water",
+                style: { height: heightPercent + "%" }
+              })
+            ),
+            React.createElement("div", { className: "human-percentage-label" }, `${heightPercent}%`)
+          ),
+          React.createElement("div", { className: "human-caption" }, `Person ${index + 1}`)
+        )
+      );
+    }
+
+    function App() {
+      // Preload with more than 9.0 L so multiple silhouettes are visible
+      const [totalLiters, setTotalLiters] = useState(9.2);
+      const [inputValue, setInputValue] = useState("0.3");
+
+      const totalHumans = useMemo(() => {
+        const minimum = 1;
+        const needed = Math.ceil(totalLiters / HUMAN_CAPACITY) || 1;
+        return Math.max(minimum, needed);
+      }, [totalLiters]);
+
+      const humansData = useMemo(() => {
+        const humans = [];
+        let remaining = totalLiters;
+        for (let i = 0; i < totalHumans; i++) {
+          const used = Math.min(HUMAN_CAPACITY, remaining);
+          const ratio = clampNumber(used / HUMAN_CAPACITY, 0, 1);
+          humans.push({ filledPortion: ratio });
+          remaining -= used;
+        }
+        return humans;
+      }, [totalLiters, totalHumans]);
+
+      const goalProgressRatio = clampNumber(totalLiters / DAILY_GOAL, 0, 2); // allow bar to fully fill at 200%
+      const goalProgressWidth = Math.min(goalProgressRatio * 100, 100);
+
+      function handleAdd() {
+        const numeric = parseFloat(String(inputValue).replace(",", "."));
+        if (isNaN(numeric) || numeric <= 0) {
+          return;
+        }
+        const next = totalLiters + numeric;
+        setTotalLiters(next);
+      }
+
+      function handleReset() {
+        setTotalLiters(0.0);
+      }
+
+      function handleInputChange(event) {
+        setInputValue(event.target.value);
+      }
+
+      const isAddDisabled = (() => {
+        const numeric = parseFloat(String(inputValue).replace(",", "."));
+        return isNaN(numeric) || numeric <= 0;
+      })();
+
+      return (
+        React.createElement("div", { className: "bottle-shell", role: "region", "aria-label": "Daily water intake dashboard" },
+          React.createElement("div", { className: "bottle-cap", "aria-hidden": "true" },
+            React.createElement("div", { className: "bottle-cap-ridges" },
+              Array.from({ length: 6 }).map((_, i) => React.createElement("span", { key: i }))
+            )
+          ),
+          React.createElement("div", { className: "bottle-neck", "aria-hidden": "true" },
+            React.createElement("div", { className: "bottle-neck-inner-line" })
+          ),
+          React.createElement("div", { className: "bottle-body" },
+            React.createElement("div", { className: "dashboard-inner" },
+              React.createElement("section", { className: "control-panel", "aria-label": "Water intake controls" },
+                React.createElement("header", { className: "control-header" },
+                  React.createElement("h1", null, "How many liters have you drunk today?"),
+                  React.createElement("p", null, "Track your personal hydration and see how full each person becomes.")
+                ),
+                React.createElement("div", null,
+                  React.createElement("div", { className: "field-group" },
+                    React.createElement("div", { className: "field-control" },
+                      React.createElement("label", { htmlFor: "add-amount-input" }, "Add Amount"),
+                      React.createElement("input", {
+                        id: "add-amount-input",
+                        className: "numeric-input",
+                        type: "number",
+                        step: "0.1",
+                        min: "0",
+                        inputMode: "decimal",
+                        value: inputValue,
+                        onChange: handleInputChange,
+                        "aria-label": "Amount of water to add in liters"
+                      })
+                    ),
+                    React.createElement("div", { className: "button-group" },
+                      React.createElement("button", {
+                        type: "button",
+                        onClick: handleAdd,
+                        className: "btn-primary" + (isAddDisabled ? " btn-disabled" : ""),
+                        disabled: isAddDisabled,
+                        "aria-disabled": isAddDisabled
+                      }, "Add"),
+                      React.createElement("button", {
+                        type: "button",
+                        onClick: handleReset,
+                        className: "btn-secondary"
+                      }, "Reset")
+                    )
+                  ),
+                  React.createElement("div", { className: "summary-row", "aria-live": "polite" },
+                    React.createElement("span", { className: "summary-label" }, "Total consumed:"),
+                    React.createElement("strong", null, formatLiters(totalLiters)),
+                    React.createElement("span", { className: "summary-label" }, formatProgress(totalLiters, DAILY_GOAL))
+                  ),
+                  React.createElement("div", { className: "goal-row" },
+                    React.createElement("span", null, "Daily Goal: 5.0 L per person."),
+                    React.createElement("div", {
+                      className: "goal-indicator",
+                      role: "img",
+                      "aria-label": `${Math.round(goalProgressRatio * 100)} percent of daily goal reached`
+                    },
+                      React.createElement("div", {
+                        className: "goal-indicator-fill",
+                        style: { width: goalProgressWidth + "%" }
+                      })
+                    )
+                  ),
+                  React.createElement("p", { className: "footnote" },
+                    "This tracker is a visual aid only and does not replace professional health guidance."
+                  )
+                )
+              ),
+              React.createElement("section", { className: "visual-panel", "aria-label": "Hydration visualization" },
+                React.createElement("header", { className: "visual-header" },
+                  React.createElement("div", null,
+                    React.createElement("div", { className: "visual-header-title" }, "Hydration per person"),
+                    React.createElement("div", { className: "visual-header-sub" }, "Each human represents 5.0 liters.")
+                  ),
+                  React.createElement("div", { className: "visual-header-sub" },
+                    totalHumans,
+                    totalHumans === 1 ? " person" : " people"
+                  )
+                ),
+                React.createElement("div", { className: "humans-wrapper" },
+                  React.createElement("div", { className: "humans-row" },
+                    humansData.map((h, index) => (
+                      React.createElement(Human, {
+                        key: index,
+                        index,
+                        filledPortion: h.filledPortion
+                      })
+                    ))
+                  )
+                ),
+                React.createElement("footer", { className: "visual-footer" },
+                  React.createElement("div", { className: "visual-footer-left" },
+                    React.createElement("span", null, "Water fills from the feet toward the head."),
+                    React.createElement("span", null, "Once a person is full, additional water fills the next person.")
+                  ),
+                  React.createElement("span", null, "View is scaled to stay entirely inside the bottle.")
+                )
+              )
+            )
+          )
+        )
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(React.createElement(App));
+  </script>
+</body>
+</html>

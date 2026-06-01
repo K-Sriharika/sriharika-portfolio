@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Coin Toss Probability Simulator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel-bg: #151b23;
+      --accent: #f5c542;
+      --accent-soft: rgba(245, 197, 66, 0.2);
+      --accent-strong: #ffc94f;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --border-subtle: #30363d;
+      --heads-gold: #f2c94c;
+      --tails-silver: #d0d7de;
+      --danger: #f85149;
+      --focus-ring: 0 0 0 3px rgba(245, 197, 66, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #161b22 0, #020409 55%);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1100px;
+      background: radial-gradient(circle at top left, #1f2937 0, #0b1017 40%, #020409 100%);
+      border-radius: 18px;
+      border: 1px solid rgba(240, 246, 252, 0.07);
+      box-shadow:
+        0 18px 60px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.02);
+      padding: 22px 22px 20px;
+      color: var(--text);
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #f0f6fc;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .header-tag {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+      opacity: 0.9;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 840px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Coin area */
+    .coin-panel {
+      background: radial-gradient(circle at top, #182030 0, #050812 60%, #020409 100%);
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .coin-panel::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 20% 0, rgba(250, 250, 250, 0.06) 0, transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(245, 197, 66, 0.08) 0, transparent 55%);
+      opacity: 0.8;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .coin-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .coin-panel-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #e5e7eb;
+    }
+
+    .coin-panel-subtitle {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .coin-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 0 8px;
+      perspective: 1200px;
+      z-index: 1;
+    }
+
+    .coin-shadow {
+      position: absolute;
+      bottom: 10px;
+      width: 210px;
+      height: 46px;
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.75) 0, transparent 70%);
+      filter: blur(8px);
+      opacity: 0.7;
+      transform-origin: center;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .coin-container {
+      width: 190px;
+      height: 190px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform-origin: center center;
+      cursor: pointer;
+      transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.3s ease;
+    }
+
+    .coin-container:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+      border-radius: 50%;
+    }
+
+    .coin-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+    }
+
+    .coin-face--back {
+      transform: rotateY(180deg);
+    }
+
+    .coin-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      filter: drop-shadow(0 16px 22px rgba(0, 0, 0, 0.7));
+    }
+
+    .coin-container.is-flipping {
+      animation: coinFlip 0.9s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+
+    .coin-shadow.is-flipping {
+      animation: coinShadow 0.9s ease-out;
+    }
+
+    @keyframes coinFlip {
+      0% {
+        transform: translateY(0) rotateX(0deg) rotateY(0deg);
+      }
+      25% {
+        transform: translateY(-60px) rotateX(200deg) rotateY(90deg);
+      }
+      50% {
+        transform: translateY(-90px) rotateX(380deg) rotateY(180deg);
+      }
+      75% {
+        transform: translateY(-40px) rotateX(540deg) rotateY(270deg);
+      }
+      100% {
+        transform: translateY(0) rotateX(720deg) rotateY(360deg);
+      }
+    }
+
+    @keyframes coinShadow {
+      0% {
+        opacity: 0.7;
+        transform: scale(1);
+      }
+      40% {
+        opacity: 0.4;
+        transform: scale(0.85);
+      }
+      100% {
+        opacity: 0.7;
+        transform: scale(1);
+      }
+    }
+
+    .coin-highlight-ring {
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow:
+        0 0 22px rgba(255, 255, 255, 0.08),
+        inset 0 0 16px rgba(255, 255, 255, 0.08);
+      pointer-events: none;
+      opacity: 0.9;
+      mix-blend-mode: screen;
+    }
+
+    .coin-gloss-sweep {
+      position: absolute;
+      inset: 18px;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 220deg,
+        rgba(255, 255, 255, 0.18) 0deg,
+        transparent 40deg,
+        transparent 150deg,
+        rgba(0, 0, 0, 0.4) 220deg,
+        rgba(255, 255, 255, 0.16) 310deg,
+        rgba(255, 255, 255, 0.4) 330deg,
+        rgba(255, 255, 255, 0.18) 360deg
+      );
+      mix-blend-mode: screen;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .coin-sparkle {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0, transparent 65%);
+      top: 20%;
+      left: 64%;
+      filter: blur(1px);
+      opacity: 0.8;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .coin-sparkle::before,
+    .coin-sparkle::after {
+      content: "";
+      position: absolute;
+      inset: 40%;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    /* Controls section */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .controls-left {
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 7px 18px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.05s ease;
+      white-space: nowrap;
+    }
+
+    button:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at 0 0, #ffe9a4 0, #f5c542 30%, #c18a1b 100%);
+      color: #1f2933;
+      font-weight: 600;
+      box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: radial-gradient(circle at 0 0, #fff0b8 0, #ffd763 30%, #d49920 100%);
+      transform: translateY(-1px);
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(0, 0, 0, 0.7),
+        inset 0 0 4px rgba(0, 0, 0, 0.5);
+      background: radial-gradient(circle at 0 0, #ffe9a4 0, #f1bd30 30%, #b87d18 100%);
+    }
+
+    .btn-ghost {
+      background: rgba(15, 23, 42, 0.75);
+      border-color: rgba(148, 163, 184, 0.45);
+      color: var(--muted);
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      background: rgba(30, 64, 175, 0.18);
+      border-color: rgba(147, 197, 253, 0.6);
+      color: #e5e7eb;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .hint-text {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .hint-text strong {
+      color: var(--accent-strong);
+      font-weight: 600;
+    }
+
+    /* Stats + history + chart panel */
+    .stats-panel {
+      background: radial-gradient(circle at top right, #1c2838 0, #050812 55%, #020409 100%);
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      padding: 16px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stats-panel::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 80% 0, rgba(56, 189, 248, 0.12) 0, transparent 52%),
+        radial-gradient(circle at 0 100%, rgba(79, 70, 229, 0.16) 0, transparent 60%);
+      opacity: 0.9;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .stats-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stats-panel-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #e5e7eb;
+    }
+
+    .stats-overview {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 600px) {
+      .stats-overview {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .stat-card {
+      background: rgba(15, 23, 42, 0.85);
+      border-radius: 10px;
+      padding: 8px 9px 7px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 40%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .stat-card:hover::before {
+      opacity: 1;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      font-size: 1.05rem;
+      font-variant-numeric: tabular-nums;
+      color: #e5e7eb;
+    }
+
+    .stat-value--accent {
+      color: var(--accent-strong);
+    }
+
+    .stat-tag {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      padding: 2px 7px;
+      background: rgba(34, 197, 94, 0.1);
+      border-radius: 999px;
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      color: #bbf7d0;
+    }
+
+    .stat-tag--warn {
+      background: rgba(248, 113, 113, 0.08);
+      border-color: rgba(248, 113, 113, 0.4);
+      color: #fecaca;
+    }
+
+    .panel-divider {
+      height: 1px;
+      margin: 4px 0;
+      background: radial-gradient(circle, rgba(148, 163, 184, 0.7) 0, transparent 70%);
+      opacity: 0.65;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Flip history */
+    .history-section {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .chips-row {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 5px;
+      min-height: 26px;
+    }
+
+    .chip {
+      min-width: 26px;
+      height: 26px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-variant-numeric: tabular-nums;
+      border: 1px solid rgba(15, 23, 42, 0.8);
+      box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .chip--heads {
+      background: radial-gradient(circle at 30% 0, #fff7cc 0, #f2c94c 40%, #b78a1f 100%);
+      color: #111827;
+    }
+
+    .chip--tails {
+      background: radial-gradient(circle at 30% 0, #f9fafb 0, #d0d7de 40%, #9ca3af 100%);
+      color: #111827;
+    }
+
+    .chip--placeholder {
+      background: rgba(15, 23, 42, 0.7);
+      border-color: rgba(55, 65, 81, 0.8);
+      color: rgba(148, 163, 184, 0.8);
+      box-shadow: inset 0 1px 0 rgba(15, 23, 42, 0.9);
+      font-weight: 500;
+    }
+
+    /* Chart */
+    .chart-section {
+      position: relative;
+      z-index: 1;
+      margin-top: 2px;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+
+    .chart-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+
+    .chart-legend {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legend-swatch {
+      width: 16px;
+      height: 3px;
+      border-radius: 999px;
+    }
+
+    .legend-swatch--actual {
+      background: linear-gradient(90deg, #38bdf8, #a855f7);
+    }
+
+    .legend-swatch--theory {
+      background-image: linear-gradient(90deg, transparent 50%, rgba(148, 163, 184, 0.8) 50%);
+      background-size: 6px 3px;
+      background-repeat: repeat-x;
+    }
+
+    .chart-frame {
+      position: relative;
+      width: 100%;
+      height: 190px;
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9) 0, rgba(15, 23, 42, 0.98) 45%, #020617 100%);
+      border-radius: 10px;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      padding: 6px 6px 8px 32px;
+      overflow: hidden;
+    }
+
+    .chart-grid {
+      position: absolute;
+      inset: 6px 6px 8px 32px;
+      pointer-events: none;
+    }
+
+    .chart-grid-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(31, 41, 55, 0.85), transparent);
+    }
+
+    .chart-grid-line--50 {
+      border-bottom: 1px dashed rgba(148, 163, 184, 0.9);
+      background: none;
+    }
+
+    .chart-grid-label {
+      position: absolute;
+      left: -30px;
+      transform: translateY(50%);
+      font-size: 0.7rem;
+      color: rgba(148, 163, 184, 0.8);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .chart-axis-x-label {
+      position: absolute;
+      bottom: 2px;
+      right: 8px;
+      font-size: 0.7rem;
+      color: rgba(148, 163, 184, 0.75);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Assistive text */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="app" role="application" aria-label="Coin toss probability simulator">
+    <header>
+      <div class="header-left">
+        <div class="header-tag">Monte Carlo in your browser</div>
+        <h1>Coin Toss Probability Simulator</h1>
+        <p>Flip a fair coin, track outcomes, and watch the running heads percentage converge toward 50%.</p>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- Coin + controls -->
+      <section class="coin-panel" aria-label="Coin flip controls and visualization">
+        <div class="coin-panel-header">
+          <div>
+            <div class="coin-panel-title">Interactive Coin</div>
+            <div class="coin-panel-subtitle">Click or press Flip to toss the coin.</div>
+          </div>
+        </div>
+
+        <div class="coin-wrapper">
+          <div class="coin-shadow" aria-hidden="true"></div>
+
+          <button
+            id="coinButton"
+            class="coin-container"
+            type="button"
+            aria-label="Flip coin"
+          >
+            <div class="coin-face coin-face--front" data-side="H">
+              <svg class="coin-svg" viewBox="0 0 200 200" aria-hidden="true">
+                <defs>
+                  <radialGradient id="headsBase" cx="30%" cy="20%" r="80%">
+                    <stop offset="0%" stop-color="#fff7ce" />
+                    <stop offset="35%" stop-color="#f7d774" />
+                    <stop offset="70%" stop-color="#d19b2b" />
+                    <stop offset="100%" stop-color="#8a5b14" />
+                  </radialGradient>
+                  <radialGradient id="headsInner" cx="30%" cy="20%" r="70%">
+                    <stop offset="0%" stop-color="#fff9dd" />
+                    <stop offset="40%" stop-color="#f5d27a" />
+                    <stop offset="100%" stop-color="#b77d25" />
+                  </radialGradient>
+                  <radialGradient id="neckShadow" cx="30%" cy="60%" r="40%">
+                    <stop offset="0%" stop-color="#b07926" />
+                    <stop offset="100%" stop-color="#7b5219" />
+                  </radialGradient>
+                </defs>
+
+                <!-- Rim -->
+                <circle cx="100" cy="100" r="96" fill="url(#headsBase)" />
+                <circle cx="100" cy="100" r="86" fill="url(#headsInner)" />
+
+                <!-- Edge notches -->
+                <g stroke="#8a5b14" stroke-width="2" stroke-linecap="round">
+                  <path d="M100 16 L100 8" />
+                  <path d="M132 20 L135 12" />
+                  <path d="M160 36 L166 30" />
+                  <path d="M180 64 L188 60" />
+                  <path d="M188 100 L196 100" />
+                  <path d="M180 136 L188 140" />
+                  <path d="M160 164 L166 170" />
+                  <path d="M132 180 L135 188" />
+                  <path d="M100 184 L100 192" />
+                  <path d="M68 180 L65 188" />
+                  <path d="M40 164 L34 170" />
+                  <path d="M20 136 L12 140" />
+                  <path d="M12 100 L4 100" />
+                  <path d="M20 64 L12 60" />
+                  <path d="M40 36 L34 30" />
+                  <path d="M68 20 L65 12" />
+                </g>
+
+                <!-- Decorative ring -->
+                <circle cx="100" cy="100" r="76" fill="none" stroke="#fef9c3" stroke-width="1.2" opacity="0.9" />
+                <circle cx="100" cy="100" r="72" fill="none" stroke="#b08927" stroke-width="1.2" opacity="0.9" />
+
+                <!-- Stars around -->
+                <g fill="#fef9c3" opacity="0.9">
+                  <circle cx="100" cy="28" r="2" />
+                  <circle cx="152" cy="48" r="1.8" />
+                  <circle cx="172" cy="100" r="1.8" />
+                  <circle cx="152" cy="152" r="1.8" />
+                  <circle cx="100" cy="172" r="1.8" />
+                  <circle cx="48" cy="152" r="1.8" />
+                  <circle cx="28" cy="100" r="1.8" />
+                  <circle cx="48" cy="48" r="1.8" />
+                </g>
+
+                <!-- Profile silhouette -->
+                <g transform="translate(25, 24)">
+                  <!-- Neck and bust -->
+                  <path
+                    d="M78 112 C72 126 58 134 44 140 C34 144 28 148 26 154 C24 160 26 166 30 170 L114 170 C118 164 120 158 118 152 C116 146 110 142 100 138 C90 134 84 132 78 112 Z"
+                    fill="url(#neckShadow)"
+                  />
+
+                  <!-- Head -->
+                  <path
+                    d="M70 56
+                       C70 36 84 22 102 22
+                       C118 22 132 34 134 52
+                       C139 56 140 64 136 70
+                       C140 78 140 88 138 96
+                       C136 104 132 110 126 114
+                       L125 118
+                       C122 126 114 132 104 134
+                       C94 136 84 134 78 128
+                       C74 124 72 118 72 112
+                       L72 102
+                       C64 94 60 86 60 76
+                       C60 68 64 60 70 56 Z"
+                    fill="#e8c070"
+                  />
+
+                  <!-- Facial details (eye, nose, lips) -->
+                  <path
+                    d="M110 66 C112 68 114 68 116 66"
+                    stroke="#7b4f1e"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    fill="none"
+                  />
+                  <path
+                    d="M118 76 C118 80 120 82 122 82"
+                    stroke="#7b4f1e"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    fill="none"
+                  />
+                  <path
+                    d="M110 90 C112 92 116 92 120 90"
+                    stroke="#7b4f1e"
+                    stroke-width="1.3"
+                    stroke-linecap="round"
+                    fill="none"
+                  />
+
+                  <!-- Hair -->
+                  <path
+                    d="M70 58
+                       C72 38 84 24 104 22
+                       C120 22 134 32 140 48
+                       C136 48 132 52 130 56
+                       C128 50 124 46 118 44
+                       C120 50 120 56 118 60
+                       C112 54 104 52 96 54
+                       C92 56 88 58 84 62
+                       C80 64 76 64 72 64
+                       C70 62 70 60 70 58 Z"
+                    fill="#8c5a1f"
+                  />
+
+                  <!-- Collar highlight -->
+                  <path
+                    d="M76 106 C86 108 96 108 104 106 C106 112 106 118 104 122 C98 124 90 124 82 122 C78 118 76 112 76 106 Z"
+                    fill="#f0cf7a"
+                  />
+                </g>
+
+                <!-- Heads label -->
+                <text x="100" y="188" text-anchor="middle" fill="#fef9c3" font-size="9" letter-spacing="3" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+                  HEADS
+                </text>
+              </svg>
+
+              <div class="coin-highlight-ring"></div>
+              <div class="coin-gloss-sweep"></div>
+              <div class="coin-sparkle"></div>
+            </div>
+
+            <div class="coin-face coin-face--back" data-side="T">
+              <svg class="coin-svg" viewBox="0 0 200 200" aria-hidden="true">
+                <defs>
+                  <radialGradient id="tailsBase" cx="70%" cy="20%" r="80%">
+                    <stop offset="0%" stop-color="#fefcfb" />
+                    <stop offset="35%" stop-color="#e5edf3" />
+                    <stop offset="70%" stop-color="#c7ced6" />
+                    <stop offset="100%" stop-color="#8b949e" />
+                  </radialGradient>
+                  <radialGradient id="tailsInner" cx="65%" cy="25%" r="70%">
+                    <stop offset="0%" stop-color="#fdfdfd" />
+                    <stop offset="35%" stop-color="#dde5ef" />
+                    <stop offset="100%" stop-color="#a1a9b4" />
+                  </radialGradient>
+                  <linearGradient id="crestShield" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#f9fafb" />
+                    <stop offset="50%" stop-color="#d1d5db" />
+                    <stop offset="100%" stop-color="#9ca3af" />
+                  </linearGradient>
+                  <radialGradient id="crestInner" cx="50%" cy="0%" r="90%">
+                    <stop offset="0%" stop-color="#e5e7eb" />
+                    <stop offset="60%" stop-color="#cbd5f5" />
+                    <stop offset="100%" stop-color="#9ca3b8" />
+                  </radialGradient>
+                </defs>
+
+                <!-- Rim -->
+                <circle cx="100" cy="100" r="96" fill="url(#tailsBase)" />
+                <circle cx="100" cy="100" r="86" fill="url(#tailsInner)" />
+
+                <!-- Edge notches -->
+                <g stroke="#6b7280" stroke-width="2" stroke-linecap="round">
+                  <path d="M100 16 L100 8" />
+                  <path d="M132 20 L135 12" />
+                  <path d="M160 36 L166 30" />
+                  <path d="M180 64 L188 60" />
+                  <path d="M188 100 L196 100" />
+                  <path d="M180 136 L188 140" />
+                  <path d="M160 164 L166 170" />
+                  <path d="M132 180 L135 188" />
+                  <path d="M100 184 L100 192" />
+                  <path d="M68 180 L65 188" />
+                  <path d="M40 164 L34 170" />
+                  <path d="M20 136 L12 140" />
+                  <path d="M12 100 L4 100" />
+                  <path d="M20 64 L12 60" />
+                  <path d="M40 36 L34 30" />
+                  <path d="M68 20 L65 12" />
+                </g>
+
+                <!-- Decorative ring -->
+                <circle cx="100" cy="100" r="76" fill="none" stroke="#e5e7eb" stroke-width="1.3" opacity="0.9" />
+                <circle cx="100" cy="100" r="72" fill="none" stroke="#9ca3af" stroke-width="1.1" opacity="0.9" />
+
+                <!-- Crest emblem -->
+                <g transform="translate(35, 28)">
+                  <!-- Crest outline -->
+                  <path
+                    d="M65 24
+                       L95 24
+                       C104 24 110 26 114 30
+                       C118 34 120 40 120 48
+                       L120 86
+                       C120 101 114 113 102 122
+                       C95 128 88 132 80 136
+                       C72 132 65 128 58 122
+                       C46 113 40 101 40 86
+                       L40 48
+                       C40 40 42 34 46 30
+                       C50 26 56 24 65 24 Z"
+                    fill="url(#crestShield)"
+                    stroke="#6b7280"
+                    stroke-width="1.6"
+                  />
+
+                  <!-- Inner field -->
+                  <path
+                    d="M66 34
+                       L94 34
+                       C100 34 104 35 107 38
+                       C110 41 112 45 112 51
+                       L112 84
+                       C112 96 108 105 100 112
+                       C94 117 88 120 82 123
+                       C76 120 70 117 64 112
+                       C56 105 52 96 52 84
+                       L52 51
+                       C52 45 54 41 57 38
+                       C60 35 64 34 66 34 Z"
+                    fill="url(#crestInner)"
+                    stroke="#9ca3af"
+                    stroke-width="1.4"
+                  />
+
+                  <!-- Crossed spears -->
+                  <g stroke="#4b5563" stroke-width="1.8" stroke-linecap="round">
+                    <path d="M62 38 L100 92" />
+                    <path d="M100 38 L62 92" />
+                  </g>
+
+                  <!-- Central diamond -->
+                  <polygon
+                    points="81,58 89,66 81,74 73,66"
+                    fill="#e5e7eb"
+                    stroke="#4b5563"
+                    stroke-width="1.2"
+                  />
+
+                  <!-- Laurel branches -->
+                  <g stroke="#4b5563" stroke-width="1.2" fill="none" stroke-linecap="round">
+                    <path d="M60 84 C56 92 55 100 57 108" />
+                    <path d="M102 84 C106 92 107 100 105 108" />
+                    <path d="M58 92 L54 94" />
+                    <path d="M61 100 L57 103" />
+                    <path d="M65 106 L61 110" />
+                    <path d="M101 92 L105 94" />
+                    <path d="M98 100 L102 103" />
+                    <path d="M94 106 L98 110" />
+                  </g>
+
+                  <!-- Crown -->
+                  <g transform="translate(60, 30)">
+                    <path
+                      d="M6 16 L14 4 L22 16 L30 4 L38 16 L46 4 L54 16 L54 22 L6 22 Z"
+                      fill="#f9fafb"
+                      stroke="#6b7280"
+                      stroke-width="1.2"
+                      stroke-linejoin="round"
+                    />
+                    <circle cx="14" cy="4" r="1.6" fill="#e5e7eb" />
+                    <circle cx="30" cy="4" r="1.6" fill="#e5e7eb" />
+                    <circle cx="46" cy="4" r="1.6" fill="#e5e7eb" />
+                  </g>
+                </g>
+
+                <!-- Tails label -->
+                <text x="100" y="188" text-anchor="middle" fill="#e5e7eb" font-size="9" letter-spacing="3" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+                  TAILS
+                </text>
+              </svg>
+
+              <div class="coin-highlight-ring"></div>
+              <div class="coin-gloss-sweep"></div>
+              <div class="coin-sparkle"></div>
+            </div>
+          </button>
+        </div>
+
+        <div class="controls" aria-label="Flip controls">
+          <div class="controls-left">
+            <button id="flipButton" class="btn-primary" type="button">
+              <span>Flip</span>
+            </button>
+            <button id="resetButton" class="btn-ghost" type="button">
+              Reset
+            </button>
+          </div>
+          <div class="hint-text">
+            or click the coin &bull; result is <strong>randomized</strong> each flip
+          </div>
+        </div>
+
+        <p id="liveResult" class="sr-only" aria-live="polite"></p>
+      </section>
+
+      <!-- Stats + history + chart -->
+      <section class="stats-panel" aria-label="Statistics and convergence chart">
+        <div class="stats-panel-header">
+          <div class="stats-panel-title">Flip Statistics</div>
+          <div id="biasTag" class="stat-tag" aria-hidden="true">Balanced</div>
+        </div>
+
+        <div class="stats-overview" aria-label="Summary statistics">
+          <article class="stat-card" aria-label="Total flips">
+            <div class="stat-label">Total flips</div>
+            <div id="totalFlips" class="stat-value">0</div>
+          </article>
+
+          <article class="stat-card" aria-label="Heads count">
+            <div class="stat-label">Heads</div>
+            <div id="headsCount" class="stat-value">0</div>
+          </article>
+
+          <article class="stat-card" aria-label="Tails count">
+            <div class="stat-label">Tails</div>
+            <div id="tailsCount" class="stat-value">0</div>
+          </article>
+
+          <article class="stat-card" aria-label="Heads percentage">
+            <div class="stat-label">Heads %</div>
+            <div id="headsPercent" class="stat-value stat-value--accent">0.0%</div>
+          </article>
+        </div>
+
+        <div class="panel-divider" aria-hidden="true"></div>
+
+        <section class="history-section" aria-label="Last 10 flips">
+          <div class="section-label">Recent flips</div>
+          <div id="historyChips" class="chips-row" aria-live="polite" aria-atomic="false">
+            <!-- chips injected via JS -->
+          </div>
+        </section>
+
+        <section class="chart-section" aria-label="Heads percentage convergence chart">
+          <div class="chart-header">
+            <div class="chart-title">Running heads percentage</div>
+            <div class="chart-legend" aria-hidden="true">
+              <span class="legend-item">
+                <span class="legend-swatch legend-swatch--actual"></span>
+                <span>Observed</span>
+              </span>
+              <span class="legend-item">
+                <span class="legend-swatch legend-swatch--theory"></span>
+                <span>50% theoretical</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="chart-frame">
+            <div class="chart-grid" aria-hidden="true">
+              <!-- 0%, 25%, 50%, 75%, 100% lines -->
+              <div class="chart-grid-line" style="top: 100%">
+                <span class="chart-grid-label">0%</span>
+              </div>
+              <div class="chart-grid-line" style="top: 75%"></div>
+              <div class="chart-grid-line chart-grid-line--50" style="top: 50%">
+                <span class="chart-grid-label">50%</span>
+              </div>
+              <div class="chart-grid-line" style="top: 25%"></div>
+              <div class="chart-grid-line" style="top: 0%">
+                <span class="chart-grid-label">100%</span>
+              </div>
+              <div class="chart-axis-x-label">Flip #</div>
+            </div>
+            <canvas id="chartCanvas" aria-hidden="true"></canvas>
+          </div>
+        </section>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const coinButton = document.getElementById('coinButton');
+      const flipButton = document.getElementById('flipButton');
+      const resetButton = document.getElementById('resetButton');
+      const liveResult = document.getElementById('liveResult');
+
+      const totalFlipsEl = document.getElementById('totalFlips');
+      const headsCountEl = document.getElementById('headsCount');
+      const tailsCountEl = document.getElementById('tailsCount');
+      const headsPercentEl = document.getElementById('headsPercent');
+      const biasTagEl = document.getElementById('biasTag');
+      const historyChipsEl = document.getElementById('historyChips');
+      const coinShadowEl = document.querySelector('.coin-shadow');
+
+      const canvas = document.getElementById('chartCanvas');
+      const ctx = canvas.getContext('2d');
+
+      let stats = {
+        total: 0,
+        heads: 0,
+        tails: 0,
+        history: [],
+        runningPercentages: []
+      };
+
+      let isFlipping = false;
+      let lastSide = 'H';
+
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        drawChart();
+      }
+
+      window.addEventListener('resize', function () {
+        window.requestAnimationFrame(resizeCanvas);
+      });
+
+      function updateStatsDisplay() {
+        totalFlipsEl.textContent = stats.total.toString();
+        headsCountEl.textContent = stats.heads.toString();
+        tailsCountEl.textContent = stats.tails.toString();
+
+        const percent = stats.total === 0 ? 0 : (stats.heads / stats.total) * 100;
+        const rounded = Math.round(percent * 10) / 10;
+        headsPercentEl.textContent = rounded.toFixed(1) + '%';
+
+        const deviation = Math.abs(percent - 50);
+        if (stats.total < 10 || deviation < 8) {
+          biasTagEl.textContent = 'Balanced';
+          biasTagEl.classList.remove('stat-tag--warn');
+        } else {
+          biasTagEl.textContent = deviation.toFixed(1) + '% from 50%';
+          biasTagEl.classList.add('stat-tag--warn');
+        }
+      }
+
+      function renderHistoryChips() {
+        historyChipsEl.innerHTML = '';
+        const max = 10;
+        const history = stats.history.slice(-max);
+
+        if (history.length === 0) {
+          for (let i = 0; i < max; i++) {
+            const chip = document.createElement('div');
+            chip.className = 'chip chip--placeholder';
+            chip.textContent = '-';
+            chip.setAttribute('aria-hidden', 'true');
+            historyChipsEl.appendChild(chip);
+          }
+          return;
+        }
+
+        for (let i = 0; i < history.length; i++) {
+          const result = history[i];
+          const chip = document.createElement('div');
+          chip.className = 'chip ' + (result === 'H' ? 'chip--heads' : 'chip--tails');
+          chip.textContent = result;
+          historyChipsEl.appendChild(chip);
+        }
+
+        for (let i = history.length; i < max; i++) {
+          const chip = document.createElement('div');
+          chip.className = 'chip chip--placeholder';
+          chip.textContent = '-';
+          chip.setAttribute('aria-hidden', 'true');
+          historyChipsEl.appendChild(chip);
+        }
+      }
+
+      function drawChart() {
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+
+        ctx.clearRect(0, 0, width, height);
+
+        ctx.save();
+        const padding = { top: 8, right: 8, bottom: 18, left: 6 };
+        const chartWidth = width - padding.left - padding.right;
+        const chartHeight = height - padding.top - padding.bottom;
+        ctx.translate(padding.left, padding.top);
+
+        ctx.globalAlpha = 0.7;
+        ctx.strokeStyle = 'rgba(55, 65, 81, 0.8)';
+        ctx.lineWidth = 1;
+
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, chartHeight);
+        ctx.moveTo(0, chartHeight);
+        ctx.lineTo(chartWidth, chartHeight);
+        ctx.stroke();
+
+        ctx.globalAlpha = 1;
+
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        const y50 = chartHeight * 0.5;
+        ctx.moveTo(0, y50);
+        ctx.lineTo(chartWidth, y50);
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.8)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        if (stats.runningPercentages.length === 0) {
+          ctx.restore();
+          return;
+        }
+
+        const n = stats.runningPercentages.length;
+        const stepX = n > 1 ? chartWidth / (n - 1) : 0;
+
+        const grad = ctx.createLinearGradient(0, 0, chartWidth, 0);
+        grad.addColorStop(0, '#38bdf8');
+        grad.addColorStop(1, '#a855f7');
+
+        ctx.beginPath();
+        for (let i = 0; i < n; i++) {
+          const p = stats.runningPercentages[i];
+          const x = stepX * i;
+          const y = chartHeight - (p / 100) * chartHeight;
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 2;
+        ctx.shadowColor = 'rgba(56, 189, 248, 0.4)';
+        ctx.shadowBlur = 6;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.stroke();
+
+        const lastX = stepX * (n - 1);
+        const lastY = chartHeight - (stats.runningPercentages[n - 1] / 100) * chartHeight;
+        const radius = 3.5;
+        const glowGrad = ctx.createRadialGradient(lastX, lastY, 0, lastX, lastY, 16);
+        glowGrad.addColorStop(0, 'rgba(56, 189, 248, 0.6)');
+        glowGrad.addColorStop(1, 'transparent');
+        ctx.beginPath();
+        ctx.fillStyle = glowGrad;
+        ctx.arc(lastX, lastY, 16, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.shadowColor = 'transparent';
+        ctx.beginPath();
+        ctx.fillStyle = '#e0f2fe';
+        ctx.arc(lastX, lastY, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      function updateAfterFlip(result) {
+        stats.total += 1;
+        if (result === 'H') {
+          stats.heads += 1;
+        } else {
+          stats.tails += 1;
+        }
+        stats.history.push(result);
+        if (stats.history.length > 50) {
+          stats.history = stats.history.slice(-50);
+        }
+
+        const percentHeads = (stats.heads / stats.total) * 100;
+        stats.runningPercentages.push(percentHeads);
+
+        updateStatsDisplay();
+        renderHistoryChips();
+        drawChart();
+
+        liveResult.textContent = 'Result: ' + (result === 'H' ? 'Heads' : 'Tails') + '. Total flips: ' + stats.total + '. Heads: ' + stats.heads + '. Tails: ' + stats.tails + '.';
+      }
+
+      function flipCoin() {
+        if (isFlipping) return;
+        isFlipping = true;
+        flipButton.disabled = true;
+        resetButton.disabled = true;
+
+        const result = Math.random() < 0.5 ? 'H' : 'T';
+
+        const currentIsHeads = lastSide === 'H';
+        const targetIsHeads = result === 'H';
+
+        let rotateY = 0;
+        if (currentIsHeads && !targetIsHeads) {
+          rotateY = 180;
+        } else if (!currentIsHeads && targetIsHeads) {
+          rotateY = 180;
+        } else {
+          rotateY = 360;
+        }
+
+        coinButton.classList.add('is-flipping');
+        coinShadowEl.classList.add('is-flipping');
+
+        const baseTransform = 'translateY(0) rotateX(0deg) ';
+        coinButton.style.transform = baseTransform + 'rotateY(' + rotateY + 'deg)';
+
+        setTimeout(function () {
+          coinButton.classList.remove('is-flipping');
+          coinShadowEl.classList.remove('is-flipping');
+          coinButton.style.transform = baseTransform + 'rotateY(' + rotateY + 'deg)';
+          lastSide = result;
+          updateAfterFlip(result);
+          isFlipping = false;
+          flipButton.disabled = false;
+          resetButton.disabled = false;
+        }, 900);
+      }
+
+      function resetAll() {
+        if (isFlipping) return;
+
+        stats = {
+          total: 0,
+          heads: 0,
+          tails: 0,
+          history: [],
+          runningPercentages: []
+        };
+
+        lastSide = 'H';
+        coinButton.style.transform = 'translateY(0) rotateX(0deg) rotateY(0deg)';
+
+        updateStatsDisplay();
+        renderHistoryChips();
+        drawChart();
+        liveResult.textContent = 'Simulation reset. Coin facing heads. Stats cleared.';
+      }
+
+      coinButton.addEventListener('click', function () {
+        flipCoin();
+      });
+
+      coinButton.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          flipCoin();
+        }
+      });
+
+      flipButton.addEventListener('click', function () {
+        flipCoin();
+      });
+
+      resetButton.addEventListener('click', function () {
+        resetAll();
+      });
+
+      window.addEventListener('keydown', function (event) {
+        if (event.key === 'r' || event.key === 'R') {
+          if ((event.target && event.target.tagName === 'INPUT') || (event.target && event.target.tagName === 'TEXTAREA')) {
+            return;
+          }
+          event.preventDefault();
+          resetAll();
+        }
+      });
+
+      function init() {
+        resizeCanvas();
+        updateStatsDisplay();
+        renderHistoryChips();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>
+ 
