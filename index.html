@@ -687,34 +687,28 @@ PORTFOLIO.projects.forEach(p => {
 function openVibeProject(url) {
   if (!url) return;
 
-  window.open(url, "_blank", "noopener,noreferrer");
-}
+  // base64 html projects
+  if (url.startsWith("data:text/html")) {
+    try {
+      const newWin = window.open("", "_blank");
 
-    // base64 html projects
-    if (url.startsWith("data:text/html")) {
-        try {
-            const newWin = window.open("", "_blank");
+      if (!newWin) {
+        alert("Popup blocked by browser.");
+        return;
+      }
 
-            if (!newWin) {
-                alert("Popup blocked by browser.");
-                return;
-            }
+      newWin.document.open();
+      newWin.document.write(atob(url.split(",")[1]));
+      newWin.document.close();
 
-            newWin.document.open();
-            newWin.document.write(
-                atob(url.split(",")[1])
-            );
-            newWin.document.close();
-
-        } catch (err) {
-            console.error(err);
-            alert("Unable to open project.");
-        }
+    } catch (err) {
+      console.error(err);
+      alert("Unable to open project.");
     }
-}
-
-  // Normal links
-  window.open(url, "_blank");
+  } else {
+    // Normal links
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
 }
 PORTFOLIO.vibeCoding.forEach(v => {
   const live = v.link && v.link.trim() !== "";
