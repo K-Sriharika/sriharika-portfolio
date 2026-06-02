@@ -14,7 +14,7 @@ const PORTFOLIO = {
   role:     "AI Evaluation Specialist · Statistical Researcher",
   location: "India · Remote",
   phone:    "+91 6378264814",
-  photo:    "images/harika.jpeg",   // your photo — already in the images/ folder
+  photo:    "images/harika.jpeg",
 
   // ---- AVAILABILITY (shown as badges in hero) ----
   availability: ["Remote", "Full-time", "Contract", "Project-based", "Freelance"],
@@ -128,20 +128,20 @@ const PORTFOLIO = {
 
   // ---- RESEARCH PROJECTS ----
   projects: [
+    { title: "RLHF Rubric & Calibration - 2026",       tag: "AI Evaluation · Rubric Design", blurb: "Built atomic 8–12 tag rubrics and difficulty-calibrated prompts (Easy 70–100% / Medium 40–70% / Hard 0–40%) to train and validate frontier code-generation and Vision-Language models.", link: "https://drive.google.com/file/d/1fXWoekDsesbPcKIQT3_yebKDUnSmzaEd/view?usp=sharing", image: "images/RLHF Rubric.png" },
     { title: "Bilingual Sentiment Evaluation - 2023", tag: "NLP · Python · LLM", blurb: "Empirical comparison of lexicon-based vs. LLM sentiment classification on 64 bilingual Hindi-English Instagram comments (41.4M aggregate views). Found 39.1% disagreement rate — rising to 57% on Hindi-dense content — with structural implications for multilingual RLHF.", link: "https://drive.google.com/file/d/16kpG1duEhwPUgyBiKWk0tatGs8yIBWs4/view?usp=sharing", image: "images/Instagram Project.png" },
     { title: "Telangana Digital Repository - 2022",    tag: "Statistics · Database creation", blurb: "Architected a state-government data repository and predictive-modelling workflow to evaluate welfare schemes, cutting reporting time by 40% and supporting interstate time-series policy analysis.", link: "https://drive.google.com/file/d/112YctiREPXdQKOKZyrI-xdak9izT31Wd/view?usp=sharing", image: "images/Telangana Digital Repository.png" },
-    { title: "RLHF Rubric & Calibration - 2026",       tag: "AI Evaluation · Rubric Design", blurb: "Built atomic 8–12 tag rubrics and difficulty-calibrated prompts (Easy 70–100% / Medium 40–70% / Hard 0–40%) to train and validate frontier code-generation and Vision-Language models.", link: "https://drive.google.com/file/d/1fXWoekDsesbPcKIQT3_yebKDUnSmzaEd/view?usp=sharing", image: "images/RLHF Rubric.png" },
     { title: "Revenue Forecasting Research - 2021", tag: "Statistics · Econometrics · Public Finance", blurb: "Authored a GoTS-CEGIS research report applying four forecasting models (ARIMA, Tax Buoyancy, Log Regression, Consensus) to Telangana's tax revenue data — Consensus Forecasting achieved sub-₹30 crore error on an ₹87,000 crore base.", link: "https://drive.google.com/file/d/1yQeTvr6EyFm0otuv39nMl9v8ysWtP7b_/view?usp=sharing", image: "images/Revenue.png" },
   ],
 
   // ---- VIBE CODING PROJECTS (interactive builds) ----
   vibeCoding: [
+    { title: "Flappy Bird Clone",               tag: "Game · Canvas",             desc: "Browser-based Flappy Bird with lives, score tracking, and collectible coins.", img: "images/Flappy Bird Clone.png",          link: "flappy-bird.html" },
     { title: "Coin Toss Probability Simulator", tag: "Statistics · Monte Carlo", desc: "Monte Carlo simulation in your browser — flip a coin, track outcomes, watch the running % converge toward 50%.", img: "images/Coin Toss Probability Simulator.png",       link: "coin-toss.html" },
     { title: "Concave Mirror Simulator",        tag: "Physics · Optics",         desc: "Drag the light source — real-time ray tracing with mirror formula, magnification, and image-nature computation.", img: "images/Concave Mirror.png",  link: "concave-mirror.html" },
     { title: "Fluid Particles Simulation",      tag: "Physics · Canvas",          desc: "Emit 1,000+ neon particles with gravity and wind controls — a fluid dynamics system running in pure JavaScript.", img: "images/Fluid Particles Sim.png", link: "fluid-particles.html" },
     { title: "Diwali Cracker Simulator",        tag: "Canvas · Festive",          desc: "A Diwali night scene with animated fireworks, families, and homes. Choose your cracker type and launch away.", img: "images/Diwali.png",           link: "diwali.html" },
-    { title: "Doodle Jump Clone",               tag: "Game · Browser",            desc: "Browser clone of the classic Doodle Jump — bounce from platform to platform, don't fall!", img: "images/Duddle Jump Clone.png",         link: "doodle-jump.html" },
-    { title: "Flappy Bird Clone",               tag: "Game · Canvas",             desc: "Browser-based Flappy Bird with lives, score tracking, and collectible coins.", img: "images/Flappy Bird Clone.png",          link: "flappy-bird.html" },
+    { title: "Doodle Jump Clone",               tag: "Game · Browser",            desc: "Browser clone of the classic Doodle Jump — bounce from platform to platform, don't fall!", img: "images/Duddle Jump Clone.png",         link: "doodle-jump.html" }, 
     { title: "Bouncing Square Simulation",      tag: "Physics · Interactive",     desc: "Click to nudge the square; it bounces and changes colour on every wall hit. Tracks speed and bounces in real time.", img: "images/Bouncing Square.png",  link: "bouncing-square.html" },
     { title: "Water Intake Tracker",            tag: "Health · Tool",             desc: "Track daily hydration with animated fill-level visuals per person — making healthy habits measurable.", img: "images/Water Intake Tracker.png",    link: "water-tracker.html" },
     { title: "Task Counter",                    tag: "Productivity · Tool",       desc: "Minimal task and time tracker with start/pause/stop controls and per-task increment counting.", img: "images/Task Counter.png",      link: "task-counter.html" },
@@ -202,7 +202,8 @@ body::before{
 body::after{
   content:""; position:fixed; top:-30vh; left:50%; transform:translateX(-50%);
   width:120vw; height:80vh; z-index:-3;
-  background:radial-gradient(ellipse at center,var(--accent-soft),transparent 60%);
+  background:radial-gradient(ellipse at 20% 0%,rgba(205,255,77,.12),transparent 50%),
+              radial-gradient(ellipse at 80% 10%,rgba(100,60,255,.1),transparent 50%);
   pointer-events:none;
 }
 .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px}
@@ -235,7 +236,7 @@ nav .wrap{display:flex; align-items:center; justify-content:space-between; heigh
 .nav-cta:hover{border-color:var(--accent); color:var(--accent)}
 @media(max-width:720px){.navlinks{display:none}}
 
-/* ---------- HERO LAYOUT (Two-column grid split) ---------- */
+/* ---------- HERO LAYOUT ---------- */
 header{padding:clamp(60px,10vw,120px) 0 60px}
 .hero-container {
   display: grid;
@@ -276,32 +277,12 @@ h1.hero em{font-style:italic; color:var(--accent); font-weight:500}
 .btn-ghost:hover{border-color:var(--text); transform:translateY(-2px)}
 
 /* availability badges */
-.avail-wrap{
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:10px;
-}
-
-.avail-label{
-  font-family:var(--mono);
-  font-size:12px;
-  color:#CDFF4D;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-
+.avail-wrap{display:flex; flex-wrap:wrap; align-items:center; gap:10px}
+.avail-label{font-family:var(--mono); font-size:12px; color:#CDFF4D; letter-spacing:.08em; text-transform:uppercase}
 .avail-badge{
-  font-family:var(--mono);
-  font-size:12px;
-  padding:7px 15px;
-  border-radius:100px;
-  border:1px solid #CDFF4D;
-  background:rgba(205,255,77,.12);
-  color:#CDFF4D;
-  letter-spacing:.04em;
-  font-weight:700;
-  backdrop-filter:blur(8px);
+  font-family:var(--mono); font-size:12px; padding:7px 15px; border-radius:100px;
+  border:1px solid #CDFF4D; background:rgba(205,255,77,.12); color:#CDFF4D;
+  letter-spacing:.04em; font-weight:700; backdrop-filter:blur(8px);
 }
 
 /* stats strip */
@@ -315,18 +296,9 @@ h1.hero em{font-style:italic; color:var(--accent); font-weight:500}
 .stat .l{font-size:13px; color:var(--muted); margin-top:6px; line-height:1.35}
 
 @media(max-width:820px){
-  .hero-container {
-    grid-template-columns: 1fr;
-    gap: 36px;
-  }
-  .hero-right {
-    justify-content: flex-start;
-    order: -1; /* Puts photo on top on mobile screens */
-  }
-  .hero-photo {
-    width: 280px;
-    height: 280px;
-  }
+  .hero-container{grid-template-columns:1fr; gap:36px}
+  .hero-right{justify-content:flex-start; order:-1}
+  .hero-photo{width:280px; height:280px}
   .stats{grid-template-columns:repeat(2,1fr)}
 }
 
@@ -334,19 +306,14 @@ h1.hero em{font-style:italic; color:var(--accent); font-weight:500}
 section{padding:clamp(60px,8vw,100px) 0; border-top:1px solid var(--line)}
 .sec-head{margin-bottom:44px}
 
-/* Unified Multi-Colored Gradient Section Headings */
 .sec-head h2, #connect h2 {
   background: linear-gradient(90deg,#F43F5E,#F97316,#FBBF24,#22C55E,#3B82F6,#8B5CF6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: inline-block;
-  font-family: var(--serif); 
-  font-weight: 900; 
-  letter-spacing: -.02em; 
-  font-size: clamp(26px, 4.2vw, 44px); 
-  margin-top: 14px; 
-  line-height: 1.05;
+  font-family: var(--serif); font-weight: 900; letter-spacing: -.02em;
+  font-size: clamp(26px, 4.2vw, 44px); margin-top: 14px; line-height: 1.05;
 }
 
 /* about */
@@ -380,9 +347,9 @@ section{padding:clamp(60px,8vw,100px) 0; border-top:1px solid var(--line)}
 .proj-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
 .proj{background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; transition:transform .25s,border-color .25s}
 .proj.clickable:hover{transform:translateY(-6px); border-color:var(--line-strong)}
-.proj-img{aspect-ratio:16/10; background:radial-gradient(circle at 30% 30%,rgba(205,255,77,.14),transparent 55%),var(--surface-2); display:flex; align-items:center; justify-content:center; border-bottom:1px solid var(--line); position:relative; overflow:hidden;}
-.proj-img img{width:100%; height:100%; object-fit:cover; transition:transform .3s ease;}
-.proj.clickable:hover .proj-img img{transform:scale(1.05);}
+.proj-img{aspect-ratio:16/10; background:radial-gradient(circle at 30% 30%,rgba(205,255,77,.14),transparent 55%),var(--surface-2); display:flex; align-items:center; justify-content:center; border-bottom:1px solid var(--line); position:relative; overflow:hidden}
+.proj-img img{width:100%; height:100%; object-fit:cover; transition:transform .3s ease}
+.proj.clickable:hover .proj-img img{transform:scale(1.05)}
 .proj-img .ph{font-family:var(--mono); font-size:38px; color:rgba(205,255,77,.5)}
 .proj-body{padding:22px; display:flex; flex-direction:column; flex:1}
 .proj-tag{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:10px}
@@ -394,50 +361,24 @@ section{padding:clamp(60px,8vw,100px) 0; border-top:1px solid var(--line)}
 
 /* ---------- VIBE CODING SECTION ---------- */
 #vibe .sec-head p{font-size:17px; color:var(--muted); margin-top:10px; max-width:65ch}
-.vibe-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:16px;
-}
+.vibe-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
 .vibe-card{
-  border-radius:16px; overflow:hidden;
-  border:1px solid var(--line); background:var(--surface);
-  transition:transform .25s, border-color .25s, box-shadow .3s;
-  display:flex; flex-direction:column;
-  cursor:pointer;
+  border-radius:16px; overflow:hidden; border:1px solid var(--line); background:var(--surface);
+  transition:transform .25s, border-color .25s, box-shadow .3s; display:flex; flex-direction:column; cursor:pointer;
 }
-a.vibe-card:hover{
-  transform:translateY(-7px) scale(1.01);
-  border-color:var(--accent);
-  box-shadow:0 18px 45px -12px rgba(205,255,77,.25);
-}
+a.vibe-card:hover{transform:translateY(-7px) scale(1.01); border-color:var(--accent); box-shadow:0 18px 45px -12px rgba(205,255,77,.25)}
 .vibe-card.no-link{cursor:default; opacity:.8}
-.vibe-thumb{
-  aspect-ratio:16/9; overflow:hidden;
-  position:relative; background:var(--surface-2);
-}
+.vibe-thumb{aspect-ratio:16/9; overflow:hidden; position:relative; background:var(--surface-2)}
 .vibe-thumb img{width:100%; height:100%; object-fit:cover; transition:transform .4s}
 a.vibe-card:hover .vibe-thumb img{transform:scale(1.06)}
-.vibe-overlay{
-  position:absolute; inset:0;
-  display:flex; align-items:center; justify-content:center;
-  background:rgba(11,11,13,.65);
-  opacity:0; transition:opacity .25s;
-}
+.vibe-overlay{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(11,11,13,.65); opacity:0; transition:opacity .25s}
 a.vibe-card:hover .vibe-overlay{opacity:1}
-.vibe-play-btn{
-  background:var(--accent); color:var(--accent-ink);
-  font-family:var(--mono); font-size:13px; font-weight:600;
-  padding:10px 20px; border-radius:100px;
-}
+.vibe-play-btn{background:var(--accent); color:var(--accent-ink); font-family:var(--mono); font-size:13px; font-weight:600; padding:10px 20px; border-radius:100px}
 .vibe-info{padding:16px 18px}
 .vibe-tag{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:7px}
 .vibe-title{font-family:var(--serif); font-weight:600; font-size:16px; margin-bottom:6px; line-height:1.2}
 .vibe-desc{font-size:12.5px; color:var(--muted); line-height:1.5}
-.vibe-cta{
-  margin-top:10px; display:inline-flex; align-items:center; gap:5px;
-  font-family:var(--mono); font-size:11px;
-}
+.vibe-cta{margin-top:10px; display:inline-flex; align-items:center; gap:5px; font-family:var(--mono); font-size:11px}
 .vibe-cta.live{color:var(--accent)}
 .vibe-cta.soon{color:var(--muted-2)}
 @media(max-width:1040px){.vibe-grid{grid-template-columns:repeat(3,1fr)}}
@@ -474,21 +415,15 @@ a.vibe-card:hover .vibe-overlay{opacity:1}
 .intro-call .ic-rate{font-family:var(--serif); font-weight:900; font-size:28px; color:var(--accent); letter-spacing:-.01em}
 @media(max-width:820px){.rate-grid{grid-template-columns:1fr; max-width:420px; margin:0 auto}}
 
-/* ---------- CONNECT (private / 1-on-1) ---------- */
-#connect .connect-inner{
-  display:grid; grid-template-columns:1.2fr 1fr; gap:56px; align-items:start;
-}
+/* ---------- CONNECT ---------- */
+#connect .connect-inner{display:grid; grid-template-columns:1.2fr 1fr; gap:56px; align-items:start}
 #connect .connect-note{font-size:18px; color:var(--muted); margin-top:18px; max-width:44ch; line-height:1.58}
 #connect .open-to{margin-top:28px}
 #connect .open-label{font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted-2); margin-bottom:12px}
 #connect .open-badges{display:flex; flex-wrap:wrap; gap:9px}
 #connect .open-badge{font-size:14px; color:var(--text); background:var(--surface); border:1px solid var(--line-strong); padding:8px 16px; border-radius:100px}
 .connect-ctas{display:flex; flex-direction:column; gap:12px}
-.cc-btn{
-  display:flex; align-items:center; justify-content:space-between;
-  padding:18px 22px; border-radius:14px; border:1px solid var(--line-strong);
-  background:var(--surface); transition:all .25s;
-}
+.cc-btn{display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-radius:14px; border:1px solid var(--line-strong); background:var(--surface); transition:all .25s}
 .cc-btn:hover{border-color:var(--accent); transform:translateX(4px)}
 .cc-btn.primary{background:var(--accent); color:var(--accent-ink); border-color:transparent}
 .cc-btn.primary:hover{box-shadow:0 8px 28px -6px var(--accent); transform:translateX(4px)}
@@ -497,10 +432,7 @@ a.vibe-card:hover .vibe-overlay{opacity:1}
 .cc-arr{font-size:20px; flex-shrink:0; margin-left:10px}
 .cc-icon{font-size:22px; margin-right:14px}
 .cc-text{flex:1}
-.connect-private-note{
-  font-family:var(--mono); font-size:12px; color:var(--muted-2); text-align:center;
-  margin-top:16px; line-height:1.7;
-}
+.connect-private-note{font-family:var(--mono); font-size:12px; color:var(--muted-2); text-align:center; margin-top:16px; line-height:1.7}
 .connect-private-note span{color:var(--accent)}
 @media(max-width:840px){#connect .connect-inner{grid-template-columns:1fr; gap:36px}}
 
@@ -514,8 +446,7 @@ footer .f-sub{font-family:var(--mono); font-size:12px; color:var(--muted-2); mar
 @keyframes rise{to{opacity:1;transform:none}}
 .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}.d4{animation-delay:.35s}.d5{animation-delay:.45s}.d6{animation-delay:.55s}
 
-/* ===== SECTION BANDS & ZONES (Global Multi-Colored Gradient Lines) ===== */
-/* Remove default top border — replaced by identical vibe gradient band pseudo-elements */
+/* ===== SECTION BANDS ===== */
 section { border-top: none !important; position: relative; }
 section::before {
   content: ""; position: absolute; top: 0; left: 0; right: 0;
@@ -526,10 +457,6 @@ section::before {
 /* ===== LIGHT SECTIONS ===== */
 .sec-light {
   background: #F4F1EB;
-  --text-l: #1A1820;
-  --muted-l: #5C5A63;
-  --line-l: rgba(26,26,32,.12);
-  --surface-l: #EDEAE3;
 }
 .sec-light .sec-head h2       { color: #1A1820; }
 .sec-light .about-grid p      { color: #3A3840; }
@@ -572,10 +499,9 @@ section::before {
 .social-btn:hover { border-color: var(--accent); color: var(--accent); }
 .social-btn svg { width: 15px; height: 15px; flex-shrink: 0; fill: currentColor; }
 
-/* ===== VIBE SECTION — deeper visual energy ===== */
+/* ===== SECTION BACKGROUNDS ===== */
 #vibe { background: #0D0D14; }
 #vibe .sec-head p { color: #9095A0; }
-/* category-based left border colours on vibe cards */
 .vibe-cat-stats   { border-left: 3px solid #F59E0B !important; }
 .vibe-cat-physics { border-left: 3px solid #3B82F6 !important; }
 .vibe-cat-canvas  { border-left: 3px solid #8B5CF6 !important; }
@@ -585,20 +511,10 @@ section::before {
 .vibe-cat-health  { border-left: 3px solid #22C55E !important; }
 .vibe-cat-festive { border-left: 3px solid #F43F5E !important; }
 
-/* ===== HERO — richer glow ===== */
-body::after {
-  background: radial-gradient(ellipse at 20% 0%,rgba(205,255,77,.12),transparent 50%),
-              radial-gradient(ellipse at 80% 10%,rgba(100,60,255,.1),transparent 50%);
-}
-
-/* ===== SKILLS SECTION ===== */
 #skills { background: #0D0F1E; }
 #skills .sec-head h2 { color: var(--text); }
-
-/* ===== RESEARCH PROJECTS SECTION ===== */
 #projects { background: #0A100E; }
 
-/* ===== CONNECT SECTION — vivid accent ===== */
 #connect { background: #100A1E; }
 #connect::after {
   content: ""; position: absolute; bottom: -20%; right: -10%;
@@ -608,55 +524,55 @@ body::after {
 }
 #connect .wrap { position: relative; z-index: 1; }
 
+/* ===== AVAIL BANNER ===== */
+#availBanner {
+  position: sticky; top: 0; z-index: 100;
+  background: #CDFF4D;
+  padding: 10px 20px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 16px; flex-wrap: wrap;
+}
+#availBanner .ab-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #0B0B0D; box-shadow: 0 0 10px rgba(0,0,0,.3);
+  flex-shrink: 0; animation: pulse 1.8s ease-in-out infinite;
+}
+#availBanner .ab-label {
+  font-family: var(--mono); font-size: 13px; color: #0B0B0D;
+  letter-spacing: 0.06em; font-weight: 700;
+}
+#availBanner .ab-desc {
+  font-family: var(--sans); font-size: 13px; color: #1A1820; font-weight: 600;
+}
+#availBanner .ab-cta {
+  font-family: var(--mono); font-size: 12px;
+  padding: 6px 14px; border-radius: 100px;
+  border: 1px solid #0B0B0D; color: #CDFF4D; background: #0B0B0D;
+  white-space: nowrap; flex-shrink: 0; transition: all .2s;
+}
+#availBanner .ab-cta:hover { background: #1A1A24; }
+#availBanner .ab-close {
+  background: none; border: none; color: #1A1820;
+  font-size: 18px; cursor: pointer; line-height: 1;
+  padding: 0 4px; flex-shrink: 0; opacity: .6;
+}
+#availBanner .ab-close:hover { opacity: 1; }
+
+@keyframes pulse {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.5;transform:scale(.85)}
+}
 </style>
 </head>
 <body>
-  <div id="availBanner" style="
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: linear-gradient(90deg, #0B0B0D 0%, #1a1a24 50%, #0B0B0D 100%);
-  border-bottom: 1px solid var(--accent);
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  flex-wrap: wrap;
-">
-  <span style="
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 10px var(--accent);
-    flex-shrink: 0;
-    animation: pulse 1.8s ease-in-out infinite;
-  "></span>
-  <span style="font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.06em;">
-    OPEN TO WORK
-  </span>
-  <span style="
-  font-family: var(--sans);
-  font-size: 13px;
-  color: #CDFF4D;
-  text-shadow: 0 0 6px rgba(205,255,77,.4);
-  font-weight: 500;
-">
-  Looking for remote full-time, contract, part-time and project roles in AI Evaluation & Statistics
-</span>
-  <a href="#connect" style="
-    font-family: var(--mono); font-size: 12px;
-    padding: 6px 14px; border-radius: 100px;
-    border: 1px solid var(--accent);
-    color: var(--accent-ink);
-    background: var(--accent);
-    white-space: nowrap;
-    flex-shrink: 0;
-  ">Let's talk →</a>
-  <button onclick="document.getElementById('availBanner').style.display='none'" style="
-    background: none; border: none; color: var(--muted);
-    font-size: 18px; cursor: pointer; line-height: 1;
-    padding: 0 4px; flex-shrink: 0;
-  ">×</button>
+
+<!-- ===== AVAILABILITY BANNER (neon green) ===== -->
+<div id="availBanner">
+  <span class="ab-dot"></span>
+  <span class="ab-label">OPEN TO WORK</span>
+  <span class="ab-desc">Looking for remote full-time, contract, part-time and project roles in AI Evaluation &amp; Statistics</span>
+  <a class="ab-cta" href="#connect">Let's talk →</a>
+  <button class="ab-close" onclick="document.getElementById('availBanner').style.display='none'">×</button>
 </div>
 
 <nav>
@@ -678,7 +594,6 @@ body::after {
     <div class="hero-left">
       <div class="hero-name reveal d1" id="heroName"></div>
       
-      <!-- LinkedIn and GitHub Row -->
       <div class="hero-socials reveal d1">
         <a class="social-btn" href="https://linkedin.com/in/sriharika-k" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
@@ -690,7 +605,6 @@ body::after {
         </a>
       </div>
       
-      <!-- Phone Row directly below LinkedIn & GitHub -->
       <div class="reveal d1" style="margin-bottom: 22px;">
         <button class="social-btn" id="heroPhoneBtn" style="cursor: pointer; background: transparent; outline: none; font-family: inherit;">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 15px; height: 15px; fill: currentColor;"><path d="M20 15.5c-1.2 0-2.4-.2-3.6-.6-.3-.1-.7 0-1 .2l-2.2 2.2c-2.8-1.4-5.1-3.8-6.6-6.6l2.2-2.2c.3-.3.4-.7.2-1-.3-1.1-.5-2.3-.5-3.5 0-.6-.4-1-1-1H4c-.6 0-1 .4-1 1 0 9.4 7.6 17 17 17 .6 0 1-.4 1-1v-3.5c0-.6-.4-1-1-1z"/></svg>
@@ -746,7 +660,6 @@ body::after {
   </div>
 </section>
 
-<!-- ======= VIBE CODING SHOWCASE ======= -->
 <section id="vibe" style="border-top:1px solid var(--line)">
   <div class="wrap">
     <div class="sec-head">
@@ -774,7 +687,6 @@ body::after {
   </div>
 </section>
 
-<!-- ======= CONNECT / PRIVATE ======= -->
 <section id="connect">
   <div class="wrap">
     <div class="connect-inner">
@@ -868,33 +780,20 @@ PORTFOLIO.projects.forEach(p => {
 // vibe coding
 function openVibeProject(url) {
   if (!url) return;
-
-  // base64 html projects
   if (url.startsWith("data:text/html")) {
     try {
       const newWin = window.open("", "_blank");
-
-      if (!newWin) {
-        alert("Popup blocked by browser.");
-        return;
-      }
-
+      if (!newWin) { alert("Popup blocked by browser."); return; }
       newWin.document.open();
       newWin.document.write(atob(url.split(",")[1]));
       newWin.document.close();
-
-    } catch (err) {
-      console.error(err);
-      alert("Unable to open project.");
-    }
+    } catch (err) { console.error(err); alert("Unable to open project."); }
   } else {
-    // Normal links
     window.open(url, "_blank");
   }
 }
 PORTFOLIO.vibeCoding.forEach(v => {
   const live = v.link && v.link.trim() !== "";
-  // derive category class from tag
   const catMap = {"statistics":"stats","monte carlo":"stats","physics":"physics","optics":"physics","canvas":"canvas","game":"game","browser":"game","tool":"tool","utility":"tool","remote work":"tool","science":"science","education":"science","health":"health","festive":"festive"};
   const tagLow = v.tag.toLowerCase();
   let catCls = "tool";
@@ -902,11 +801,7 @@ PORTFOLIO.vibeCoding.forEach(v => {
   const card = el("div","vibe-card vibe-cat-"+catCls+(live?"":" no-link"));
   if(live){
     card.style.cursor = "pointer";
-    card.addEventListener("click", function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      openVibeProject(v.link);
-    });
+    card.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); openVibeProject(v.link); });
   }
   const thumb = el("div","vibe-thumb");
   thumb.innerHTML = `<img src="${v.img}" alt="${v.title}" loading="lazy">`;
@@ -930,10 +825,9 @@ PORTFOLIO.links.forEach(l => {
   $("#bento").appendChild(t);
 });
 
-// rate card — intro call row
+// rate card
 const ir = $("#introCallRow");
 ir.innerHTML=`<div class="ic-text"><b>30-min call</b><br>Breaking into AI evaluation? I'll share exactly where I found work, what platforms pay well, and what got me hired — from my own experience, honestly.</div><div class="ic-rate">${PORTFOLIO.introCallRate}</div>`;
-// rate card — tiers
 PORTFOLIO.rates.forEach(r => {
   const c = el("div","rate"+(r.featured?" featured":""));
   c.innerHTML=`${r.featured?'<span class="badge">Most popular</span>':''}<div class="plan">${r.plan}</div><div class="price">${r.price}</div><div class="detail">${r.detail}</div>`;
@@ -947,17 +841,14 @@ PORTFOLIO.availability.forEach(a => {
   const sp = el("span","open-badge",a); $("#openBadges").appendChild(sp);
 });
 const ctas = $("#connectCtas");
-// Book a call (primary) — uses bookingLink or mailto fallback
 const callHref = PORTFOLIO.bookingLink || `mailto:${PORTFOLIO.connectEmail}?subject=Let's%20connect%20-%20Intro%20call`;
 const callBtn = el("a","cc-btn primary",`<span class="cc-icon">📞</span><div class="cc-text"><div class="cc-label">Book a 30-min call</div><div class="cc-sub">${PORTFOLIO.introCallRate}</div></div><span class="cc-arr">→</span>`);
 callBtn.href = callHref; callBtn.target = "_blank";
 ctas.appendChild(callBtn);
-// LinkedIn
 const liBtn = el("a","cc-btn",`<span class="cc-icon">💼</span><div class="cc-text"><div class="cc-label">Connect on LinkedIn</div><div class="cc-sub">sriharika-k</div></div><span class="cc-arr">↗</span>`);
 liBtn.href = PORTFOLIO.connectLinkedIn; liBtn.target = "_blank";
 ctas.appendChild(liBtn);
 
-// Phone (Click to Reveal)
 const phoneBtn = el("div","cc-btn",`<span class="cc-icon">📱</span><div class="cc-text"><div class="cc-label">Call / WhatsApp</div><div class="cc-sub" id="revealPhone">Click to reveal phone number</div></div><span class="cc-arr" id="phoneArr">→</span>`);
 phoneBtn.style.cursor = "pointer";
 phoneBtn.addEventListener("click", function() {
@@ -973,12 +864,10 @@ phoneBtn.addEventListener("click", function() {
 });
 ctas.appendChild(phoneBtn);
 
-// Email
 const emBtn = el("a","cc-btn",`<span class="cc-icon">✉️</span><div class="cc-text"><div class="cc-label">Send an email</div><div class="cc-sub">${PORTFOLIO.connectEmail}</div></div><span class="cc-arr">→</span>`);
 emBtn.href = `mailto:${PORTFOLIO.connectEmail}`;
 ctas.appendChild(emBtn);
 
-// Top Hero Phone (Click to Reveal)
 const hpBtn = $("#heroPhoneBtn");
 if (hpBtn) {
   hpBtn.addEventListener("click", function() {
@@ -999,23 +888,15 @@ $("#footName").textContent = PORTFOLIO.name;
 $("#footSub").textContent = `${PORTFOLIO.role} · ${new Date().getFullYear()}`;
 document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
 </script>
-<!-- Visitor counter (fixed bottom-right) -->
+
+<!-- Visitor counter badge (bottom-right) -->
 <div id="visitorCounter" style="
-  position: fixed;
-  bottom: 18px;
-  right: 18px;
-  z-index: 100;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  border-radius: 100px;
-  background: rgba(11,11,13,.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--accent);
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: .04em;
+  position: fixed; bottom: 18px; right: 18px; z-index: 100;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-radius: 100px;
+  background: rgba(11,11,13,.85); backdrop-filter: blur(10px);
+  border: 1px solid var(--accent); font-family: var(--mono);
+  font-size: 12px; letter-spacing: .04em;
   box-shadow: 0 8px 24px rgba(0,0,0,.4), 0 0 0 4px var(--accent-soft);
 ">
   <span style="width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); animation:pulse 1.8s ease-in-out infinite; flex-shrink:0;"></span>
@@ -1024,29 +905,40 @@ document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
 </div>
 
 <style>
-@keyframes pulse {
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:.5;transform:scale(.85)}
-}
 @media(max-width:600px){
   #visitorCounter{bottom:12px;right:12px;font-size:11px;padding:6px 11px;}
 }
 </style>
 
-<!-- GoatCounter: track visits -->
+<!-- GoatCounter: track visits (loaded once) -->
 <script data-goatcounter="https://sriharika.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 
-<!-- Fetch & display visitor count from GoatCounter API -->
+<!-- Visitor count display via counterapi.dev -->
 <script>
-(function fetchCount() {
-  fetch('https://sriharika.goatcounter.com/counter/' + encodeURIComponent(location.pathname) + '.json')
-    .then(r => r.json())
-    .then(d => {
-      document.getElementById('visitorCount').textContent = d.count.toLocaleString();
+(function(){
+  var el = document.getElementById('visitorCount');
+
+  // Try counterapi.dev first
+  fetch('https://api.counterapi.dev/v1/sriharika-portfolio/visits/up')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d && d.count != null){
+        el.textContent = d.count.toLocaleString();
+      } else {
+        el.textContent = '--';
+      }
     })
-    .catch(() => {
-      document.getElementById('visitorCount').textContent = '--';
+    .catch(function(){
+      // Fallback: try alternative endpoint
+      fetch('https://api.countapi.xyz/hit/k-sriharika.github.io/sriharika-portfolio')
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          el.textContent = (d && d.value) ? d.value.toLocaleString() : '--';
+        })
+        .catch(function(){
+          el.textContent = '--';
+        });
     });
 })();
 </script>
