@@ -634,9 +634,14 @@ body::after {
   <span style="font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.06em;">
     OPEN TO WORK
   </span>
-  <span style="font-family: var(--sans); font-size: 13px; color: #ECECE6;">
-    Looking for remote <strong>full-time</strong>, <strong>contract</strong>, <strong>part-time</strong> and <strong>project</strong> roles in AI Evaluation &amp; Statistics
-  </span>
+  <span style="
+  font-family: var(--sans);
+  font-size: 13px;
+  color: #DFFF7A;
+  font-weight: 500;
+">
+  Looking for remote full-time, contract, part-time and project roles in AI Evaluation & Statistics
+</span>
   <a href="#connect" style="
     font-family: var(--mono); font-size: 12px;
     padding: 6px 14px; border-radius: 100px;
@@ -883,7 +888,7 @@ function openVibeProject(url) {
     }
   } else {
     // Normal links
-    window.open(url, "_blank", "noopener,noreferrer");
+    window.open(url, "_blank");
   }
 }
 PORTFOLIO.vibeCoding.forEach(v => {
@@ -1028,7 +1033,9 @@ document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
 </style>
 
 <script>
-fetch('https://api.countapi.xyz/hit/sriharika-portfolio/visitors')
+  data-goatcounter="https://sriharika.goatcounter.com/count"
+  async
+  src="https://gc.zgo.at/count.js">
   .then(res => res.json())
   .then(data => {
     document.getElementById('visitorCount').textContent =
