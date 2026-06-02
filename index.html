@@ -637,7 +637,8 @@ body::after {
   <span style="
   font-family: var(--sans);
   font-size: 13px;
-  color: #DFFF7A;
+  color: #CDFF4D;
+  text-shadow: 0 0 6px rgba(205,255,77,.4);
   font-weight: 500;
 ">
   Looking for remote full-time, contract, part-time and project roles in AI Evaluation & Statistics
@@ -1032,18 +1033,22 @@ document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
 }
 </style>
 
+<!-- GoatCounter: track visits -->
+<script data-goatcounter="https://sriharika.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+
+<!-- Fetch & display visitor count from GoatCounter API -->
 <script>
-  data-goatcounter="https://sriharika.goatcounter.com/count"
-  async
-  src="https://gc.zgo.at/count.js">
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById('visitorCount').textContent =
-      data.value.toLocaleString();
-  })
-  .catch(() => {
-    document.getElementById('visitorCount').textContent = '--';
-  });
+(function fetchCount() {
+  fetch('https://sriharika.goatcounter.com/counter/' + encodeURIComponent(location.pathname) + '.json')
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById('visitorCount').textContent = d.count.toLocaleString();
+    })
+    .catch(() => {
+      document.getElementById('visitorCount').textContent = '--';
+    });
+})();
 </script>
 </body>
 </html>
