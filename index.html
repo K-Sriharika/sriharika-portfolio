@@ -914,38 +914,39 @@ document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
 <script data-goatcounter="https://sriharika.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 
-<!-- Visitor count display via counterapi.dev -->
+<!-- Visitor count display via countapi.mileshilliard.com -->
 <script>
 (function(){
   var el = document.getElementById('visitorCount');
-  // New namespace key for tracking unique devices globally
-  var globalKey = 'sriharika-portfolio/device-uniques-v5';
-  var storageKey = 'sriharika-portfolio-visited-v5';
+  // Highly unique key for real-time Redis-backed counts
+  var uniqueKey = 'sriharika_portfolio_unique_devices_v6'; 
+  var storageKey = 'sriharika_visited_v6';
   
   var hasVisited = false;
   try {
     hasVisited = !!localStorage.getItem(storageKey);
   } catch (e) {
-    hasVisited = false; // Fallback if browser local storage is blocked
+    hasVisited = false;
   }
 
-  // If visited, just read. If first time on this device, increment count.
+  // If this device has visited, fetch current count. If new, increment instantly.
   var endpoint = hasVisited
-    ? 'https://api.counterapi.dev/v1/' + globalKey
-    : 'https://api.counterapi.dev/v1/' + globalKey + '/up';
+    ? 'https://countapi.mileshilliard.com/api/v1/get/' + uniqueKey
+    : 'https://countapi.mileshilliard.com/api/v1/hit/' + uniqueKey;
 
   fetch(endpoint)
     .then(function(res) {
       if (res.status === 404) {
-        // Safe creation fallback if the key is completely new
-        return fetch('https://api.counterapi.dev/v1/' + globalKey + '/up')
+        // Safe key creation fallback if first visit ever
+        return fetch('https://countapi.mileshilliard.com/api/v1/hit/' + uniqueKey)
           .then(function(r) { return r.json(); });
       }
       return res.json();
     })
     .then(function(data) {
-      if (data && data.count != null) {
-        el.textContent = data.count.toLocaleString();
+      if (data && data.value != null) {
+        var count = parseInt(data.value, 10);
+        el.textContent = count.toLocaleString();
         if (!hasVisited) {
           try { localStorage.setItem(storageKey, '1'); } catch (e) {}
         }
@@ -955,7 +956,7 @@ document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
     })
     .catch(function(err) {
       console.warn('Visitor counter fallback:', err);
-      el.textContent = '1'; // Fallback to safe default if API is slow
+      el.textContent = '1'; // Fallback if API is slow
     });
 })();
 </script>
