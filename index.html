@@ -915,71 +915,47 @@ document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
         async src="//gc.zgo.at/count.js"></script>
 
 <!-- Visitor count display via counterapi.dev -->
-<!-- Visitor count display via counterapi.dev -->
 <script>
 (function(){
   var el = document.getElementById('visitorCount');
-  // Namespace and key for tracking true unique IP-based visits
-  var globalKey = 'sriharika-portfolio/unique-visitors-v3';
+  // New namespace key for tracking unique devices globally
+  var globalKey = 'sriharika-portfolio/device-uniques-v5';
+  var storageKey = 'sriharika-portfolio-visited-v5';
   
-  // Step 1: Check public IP address
-  fetch('https://api.ipify.org?format=json')
+  var hasVisited = false;
+  try {
+    hasVisited = !!localStorage.getItem(storageKey);
+  } catch (e) {
+    hasVisited = false; // Fallback if browser local storage is blocked
+  }
+
+  // If visited, just read. If first time on this device, increment count.
+  var endpoint = hasVisited
+    ? 'https://api.counterapi.dev/v1/' + globalKey
+    : 'https://api.counterapi.dev/v1/' + globalKey + '/up';
+
+  fetch(endpoint)
     .then(function(res) {
-      if (!res.ok) throw new Error('IP lookup failed');
+      if (res.status === 404) {
+        // Safe creation fallback if the key is completely new
+        return fetch('https://api.counterapi.dev/v1/' + globalKey + '/up')
+          .then(function(r) { return r.json(); });
+      }
       return res.json();
-    })
-    .then(function(ipData) {
-      // Create a safe, anonymized lookup key from the IP address
-      var ipKey = 'ip-' + ipData.ip.replace(/[\.:]/g, '-');
-      
-      // Step 2: Check if this IP key has counted before
-      return fetch('https://api.counterapi.dev/v1/sriharika-unique-ips/' + ipKey)
-        .then(function(res) {
-          if (res.status === 404) return { count: 0 }; // Safe default if key is brand new
-          return res.json().catch(function() { return { count: 0 }; });
-        })
-        .then(function(ipCountData) {
-          var isNewVisitor = !ipCountData || ipCountData.count === 0;
-          
-          if (isNewVisitor) {
-            // Step 3a: Mark this IP as visited
-            return fetch('https://api.counterapi.dev/v1/sriharika-unique-ips/' + ipKey + '/up')
-              .then(function() {
-                // Step 3b: Increment the global unique visitor count
-                return fetch('https://api.counterapi.dev/v1/' + globalKey + '/up');
-              })
-              .then(function(res) { return res.json(); });
-          } else {
-            // Step 4: IP already visited, just fetch the current global count
-            return fetch('https://api.counterapi.dev/v1/' + globalKey)
-              .then(function(res) {
-                if (res.status === 404) return { count: 1 };
-                return res.json();
-              });
-          }
-        });
     })
     .then(function(data) {
       if (data && data.count != null) {
         el.textContent = data.count.toLocaleString();
+        if (!hasVisited) {
+          try { localStorage.setItem(storageKey, '1'); } catch (e) {}
+        }
       } else {
         el.textContent = '1';
       }
     })
     .catch(function(err) {
-      console.warn('Visitor tracking fallback loaded:', err);
-      // Fallback: If IP lookup is blocked by a browser adblocker, simply read current count
-      fetch('https://api.counterapi.dev/v1/' + globalKey)
-        .then(function(res) {
-          if (res.status === 404) return { count: 1 };
-          return res.json();
-        })
-        .then(function(data) {
-          el.textContent = data.count ? data.count.toLocaleString() : '1';
-        })
-        .catch(function() {
-          el.textContent = '1'; // Final fallback if counterapi is completely down
-        });
+      console.warn('Visitor counter fallback:', err);
+      el.textContent = '1'; // Fallback to safe default if API is slow
     });
 })();
 </script>
