@@ -130,7 +130,7 @@ const PORTFOLIO = {
   projects: [
     { title: "Bilingual Sentiment Evaluation", tag: "NLP · Python · LLM", blurb: "Empirical comparison of lexicon-based vs. LLM sentiment classification on 64 bilingual Hindi-English Instagram comments (41.4M aggregate views). Found 39.1% disagreement rate — rising to 57% on Hindi-dense content — with structural implications for multilingual RLHF.", link: "https://drive.google.com/file/d/16kpG1duEhwPUgyBiKWk0tatGs8yIBWs4/view?usp=sharing", image: "images/Instagram Project.png" },
     { title: "Telangana Digital Repository",    tag: "Statistics · Database creation", blurb: "Architected a state-government data repository and predictive-modelling workflow to evaluate welfare schemes, cutting reporting time by 40% and supporting interstate time-series policy analysis.", link: "https://drive.google.com/file/d/112YctiREPXdQKOKZyrI-xdak9izT31Wd/view?usp=sharing", image: "images/Telangana Digital Repository.png" },
-    { title: "RLHF Rubric & Calibration",       tag: "AI Evaluation · Rubric Design", blurb: "Built atomic 8–12 tag rubrics and difficulty-calibrated prompts (Easy 70–100% / Medium 40–70% / Hard 0–40%) to train and validate frontier code-generation and Vision-Language models.", link: "https://drive.google.com/file/d/1fXWoekDsesbPcKIQT3_yebKDUnSmzaEd/view?usp=sharing", image: "images/RLHF Rubric.png" }
+    { title: "RLHF Rubric & Calibration",       tag: "AI Evaluation · Rubric Design", blurb: "Built atomic 8–12 tag rubrics and difficulty-calibrated prompts (Easy 70–100% / Medium 40–70% / Hard 0–40%) to train and validate frontier code-generation and Vision-Language models.", link: "https://drive.google.com/file/d/1fXWoekDsesbPcKIQT3_yebKDUnSmzaEd/view?usp=sharing", image: "images/RLHF Rubric.png" },
     { title: "Revenue Forecasting Research", tag: "Statistics · Econometrics · Public Finance", blurb: "Authored a GoTS-CEGIS research report applying four forecasting models (ARIMA, Tax Buoyancy, Log Regression, Consensus) to Telangana's tax revenue data — Consensus Forecasting achieved sub-₹30 crore error on an ₹87,000 crore base.", link: "https://drive.google.com/file/d/1yQeTvr6EyFm0otuv39nMl9v8ysWtP7b_/view?usp=sharing", image: "images/Revenue.png" },
   ],
 
@@ -973,8 +973,8 @@ $("#footName").textContent = PORTFOLIO.name;
 $("#footSub").textContent = `${PORTFOLIO.role} · ${new Date().getFullYear()}`;
 document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
 </script>
-<!-- Visitor counter (fixed bottom-right) -->
-<a href="#" id="visitorCounter" style="
+<!-- Visitor counter (fixed bottom-right, unique visits only) -->
+<div id="visitorCounter" style="
   position: fixed;
   bottom: 18px;
   right: 18px;
@@ -992,17 +992,56 @@ document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
   font-size: 12px;
   letter-spacing: .04em;
   box-shadow: 0 8px 24px rgba(0,0,0,.4), 0 0 0 4px var(--accent-soft);
-  text-decoration: none;
-  pointer-events: none;
 ">
-  <span style="width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); animation: pulse 1.8s ease-in-out infinite;"></span>
+  <span style="width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); animation: pulse 1.8s ease-in-out infinite; flex-shrink:0;"></span>
   <span style="color:var(--muted);">visitors</span>
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=k-sriharika.sriharika-portfolio&left_color=transparent&right_color=transparent&left_text=&style=flat" 
-       alt="count" 
-       style="height:14px; vertical-align:middle; filter: brightness(0) saturate(100%) invert(95%) sepia(50%) saturate(2000%) hue-rotate(40deg) brightness(105%);">
-</a>
+  <span id="visitorCount" style="color:var(--accent); font-weight:600; min-width:24px; text-align:right;">—</span>
+</div>
 
 <style>
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .5; transform: scale(.85); }
+}
+@media (max-width: 600px) {
+  #visitorCounter { bottom: 12px; right: 12px; font-size: 11px; padding: 6px 11px; }
+}
+</style>
+
+<script>
+(function() {
+  const NAMESPACE = "k-sriharika-portfolio";
+  const KEY       = "pagevisit";
+  const LS_KEY    = "ks_visited";
+
+  // Only count if this browser hasn't visited before
+  const alreadyVisited = localStorage.getItem(LS_KEY);
+
+  function displayCount(n) {
+    const el = document.getElementById("visitorCount");
+    if (el) el.textContent = n >= 1000
+      ? (n / 1000).toFixed(1) + "k"
+      : n.toString();
+  }
+
+  if (!alreadyVisited) {
+    // First visit — hit the increment endpoint
+    fetch(`https://api.counterapi.dev/v1/${NAMESPACE}/${KEY}/up`)
+      .then(r => r.json())
+      .then(data => {
+        displayCount(data.count || 0);
+        localStorage.setItem(LS_KEY, "1");
+      })
+      .catch(() => displayCount("—"));
+  } else {
+    // Return visit — just read the count, don't increment
+    fetch(`https://api.counterapi.dev/v1/${NAMESPACE}/${KEY}`)
+      .then(r => r.json())
+      .then(data => displayCount(data.count || 0))
+      .catch(() => displayCount("—"));
+  }
+})();
+</script>
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: .5; transform: scale(.85); }
