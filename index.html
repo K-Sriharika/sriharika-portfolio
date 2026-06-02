@@ -277,10 +277,10 @@ h1.hero em{font-style:italic; color:var(--accent); font-weight:500}
 
 /* availability badges */
 .avail-wrap{display:flex; flex-wrap:wrap; align-items:center; gap:10px}
-.avail-label{font-family:var(--mono); font-size:12px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase}
+.avail-label{font-family:var(--mono); font-size:12px; color:#CDFF4D; letter-spacing:.08em; text-transform:uppercase}
 .avail-badge{
   font-family:var(--mono); font-size:12px; padding:6px 14px; border-radius:100px;
-  border:1px solid var(--accent); color:#0B0B0D; background:var(--accent);
+  border:1px solid #CDFF4D; color:#CDFF4D; background:transparent;
   letter-spacing:.04em; font-weight:700;
 }
 
@@ -1010,22 +1010,24 @@ document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
 <script>
 (function(){
   const el = document.getElementById("visitorCount");
-  function fmt(n){ return n>=1000?(n/1000).toFixed(1)+"k":String(n); }
-  function show(n){ if(el) el.textContent=fmt(n); }
+  function show(n){ if(el) el.textContent = n >= 1000 ? (n/1000).toFixed(1)+"k" : String(n); }
 
-  const key = "ks_counted";
-  const alreadyCounted = localStorage.getItem(key);
+  const VISITED = "ks_v1";
+  const STORED  = "ks_n1";
 
-  if(!alreadyCounted){
-    fetch("https://hits.sh/k-sriharika.github.io/sriharika-portfolio.json")
+  const saved = parseInt(localStorage.getItem(STORED) || "0");
+  if(saved) show(saved);
+
+  if(!localStorage.getItem(VISITED)){
+    fetch("https://api.counterapi.dev/v1/ksharika2024/portfolio/up")
       .then(r=>r.json())
-      .then(d=>{ show(d.total||1); localStorage.setItem(key,"1"); })
-      .catch(()=>show("—"));
+      .then(d=>{ const n=d.count||1; show(n); localStorage.setItem(STORED,n); localStorage.setItem(VISITED,"1"); })
+      .catch(()=>{ const n=(saved||0)+1; show(n); localStorage.setItem(STORED,n); localStorage.setItem(VISITED,"1"); });
   } else {
-    fetch("https://hits.sh/k-sriharika.github.io/sriharika-portfolio.json")
+    fetch("https://api.counterapi.dev/v1/ksharika2024/portfolio")
       .then(r=>r.json())
-      .then(d=>show(d.total||1))
-      .catch(()=>show("—"));
+      .then(d=>{ const n=d.count||saved||1; show(n); localStorage.setItem(STORED,n); })
+      .catch(()=>{ if(saved) show(saved); });
   }
 })();
 </script>
