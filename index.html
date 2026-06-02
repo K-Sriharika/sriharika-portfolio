@@ -570,7 +570,7 @@ section::before {
 <div id="availBanner">
   <span class="ab-dot"></span>
   <span class="ab-label">OPEN TO WORK</span>
-  <span class="ab-desc">Looking for remote full-time, contract, part-time and project roles in AI Evaluation &amp; Statistics</span>
+  <span class="ab-desc">Looking for remote full-time, contract, part-time and project roles in AI Evaluation &amp; Data Analysis</span>
   <a class="ab-cta" href="#connect">Let's talk →</a>
   <button class="ab-close" onclick="document.getElementById('availBanner').style.display='none'">×</button>
 </div>
@@ -918,28 +918,25 @@ document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
 <script>
 (function(){
   var el = document.getElementById('visitorCount');
+  var key = 'sriharika-portfolio/visits';
+  var hasVisited = false;
+  try { hasVisited = !!localStorage.getItem('sriharika-visited'); } catch(e){}
 
-  // Try counterapi.dev first
-  fetch('https://api.counterapi.dev/v1/sriharika-portfolio/visits/up')
+  var endpoint = hasVisited
+    ? 'https://api.counterapi.dev/v1/' + key
+    : 'https://api.counterapi.dev/v1/' + key + '/up';
+
+  fetch(endpoint)
     .then(function(r){ return r.json(); })
     .then(function(d){
       if(d && d.count != null){
         el.textContent = d.count.toLocaleString();
+        try { localStorage.setItem('sriharika-visited', '1'); } catch(e){}
       } else {
         el.textContent = '--';
       }
     })
-    .catch(function(){
-      // Fallback: try alternative endpoint
-      fetch('https://api.countapi.xyz/hit/k-sriharika.github.io/sriharika-portfolio')
-        .then(function(r){ return r.json(); })
-        .then(function(d){
-          el.textContent = (d && d.value) ? d.value.toLocaleString() : '--';
-        })
-        .catch(function(){
-          el.textContent = '--';
-        });
-    });
+    .catch(function(){ el.textContent = '--'; });
 })();
 </script>
 </body>
