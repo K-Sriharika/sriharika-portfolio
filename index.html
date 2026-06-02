@@ -918,25 +918,41 @@ document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
 <script>
 (function(){
   var el = document.getElementById('visitorCount');
-  var key = 'sriharika-portfolio/visits';
+  var storageKey = 'sriharika-visited';
+  var countKey = 'sriharika-last-count';
   var hasVisited = false;
-  try { hasVisited = !!localStorage.getItem('sriharika-visited'); } catch(e){}
+  var cachedCount = null;
 
-  var endpoint = hasVisited
-    ? 'https://api.counterapi.dev/v1/' + key
-    : 'https://api.counterapi.dev/v1/' + key + '/up';
+  try {
+    hasVisited = !!localStorage.getItem(storageKey);
+    cachedCount = localStorage.getItem(countKey);
+  } catch(e){}
 
-  fetch(endpoint)
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if(d && d.count != null){
-        el.textContent = d.count.toLocaleString();
-        try { localStorage.setItem('sriharika-visited', '1'); } catch(e){}
-      } else {
-        el.textContent = '--';
-      }
-    })
-    .catch(function(){ el.textContent = '--'; });
+  // Show cached count immediately if available
+  if(cachedCount) el.textContent = cachedCount;
+
+  if(!hasVisited){
+    // First visit: increment
+    fetch('https://api.counterapi.dev/v1/sriharika-portfolio-visits/main/up')
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d && d.count != null){
+          el.textContent = d.count.toLocaleString();
+          try {
+            localStorage.setItem(storageKey, '1');
+            localStorage.setItem(countKey, d.count.toLocaleString());
+          } catch(e){}
+        } else { el.textContent = cachedCount || '--'; }
+      })
+      .catch(function(){ el.textContent = cachedCount || '--'; });
+  } else {
+    // Return visit: just read (use /up but count won't be truly unique — 
+    // or show cached). We'll do a silent /up to get current count but 
+    // the localStorage gate already prevents inflating from same device.
+    // However counterapi counts ALL calls to /up. So for return visitors,
+    // just show cached count. It will update next time a NEW visitor arrives.
+    if(!cachedCount) el.textContent = '--';
+  }
 })();
 </script>
 </body>
