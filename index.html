@@ -277,11 +277,11 @@ h1.hero em{font-style:italic; color:var(--accent); font-weight:500}
 
 /* availability badges */
 .avail-wrap{display:flex; flex-wrap:wrap; align-items:center; gap:10px}
-.avail-label{font-family:var(--mono); font-size:12px; color:var(--muted-2); letter-spacing:.08em; text-transform:uppercase}
+.avail-label{font-family:var(--mono); font-size:12px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase}
 .avail-badge{
   font-family:var(--mono); font-size:12px; padding:6px 14px; border-radius:100px;
-  border:1px solid var(--accent-ink); color:var(--accent-ink); background:var(--accent);
-  letter-spacing:.04em;
+  border:1px solid var(--accent); color:#0B0B0D; background:var(--accent);
+  letter-spacing:.04em; font-weight:700;
 }
 
 /* stats strip */
@@ -906,7 +906,7 @@ PORTFOLIO.links.forEach(l => {
 
 // rate card — intro call row
 const ir = $("#introCallRow");
-ir.innerHTML=`<div class="ic-text"><b>30-min intro call</b><br>Breaking into AI evaluation? I'll share exactly where I found work, what platforms pay well, and what got me hired — from my own experience, honestly.</div><div class="ic-rate">${PORTFOLIO.introCallRate}</div>`;
+ir.innerHTML=`<div class="ic-text"><b>30-min call</b><br>Breaking into AI evaluation? I'll share exactly where I found work, what platforms pay well, and what got me hired — from my own experience, honestly.</div><div class="ic-rate">${PORTFOLIO.introCallRate}</div>`;
 // rate card — tiers
 PORTFOLIO.rates.forEach(r => {
   const c = el("div","rate"+(r.featured?" featured":""));
@@ -1010,35 +1010,22 @@ document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
 <script>
 (function(){
   const el = document.getElementById("visitorCount");
+  function fmt(n){ return n>=1000?(n/1000).toFixed(1)+"k":String(n); }
+  function show(n){ if(el) el.textContent=fmt(n); }
 
-  function fmt(n){
-    return n >= 1000 ? (n/1000).toFixed(1)+"k" : String(n);
-  }
+  const key = "ks_counted";
+  const alreadyCounted = localStorage.getItem(key);
 
-  function show(n){ if(el) el.textContent = fmt(n); }
-
-  const visited = sessionStorage.getItem("ks_session");
-
-  if(!visited){
-    // New session — increment
-    fetch("https://api.counterapi.dev/v1/ks-portfolio-harika/hits/up")
-      .then(r => r.json())
-      .then(d => { show(d.count || 1); sessionStorage.setItem("ks_session","1"); })
-      .catch(() => {
-        // Fallback: just show stored number
-        show(parseInt(localStorage.getItem("ks_last_count")||"1"));
-        sessionStorage.setItem("ks_session","1");
-      });
+  if(!alreadyCounted){
+    fetch("https://hits.sh/k-sriharika.github.io/sriharika-portfolio.json")
+      .then(r=>r.json())
+      .then(d=>{ show(d.total||1); localStorage.setItem(key,"1"); })
+      .catch(()=>show("—"));
   } else {
-    // Same session refresh — just read
-    fetch("https://api.counterapi.dev/v1/ks-portfolio-harika/hits")
-      .then(r => r.json())
-      .then(d => {
-        const n = d.count || 1;
-        show(n);
-        localStorage.setItem("ks_last_count", String(n));
-      })
-      .catch(() => show(parseInt(localStorage.getItem("ks_last_count")||"1")));
+    fetch("https://hits.sh/k-sriharika.github.io/sriharika-portfolio.json")
+      .then(r=>r.json())
+      .then(d=>show(d.total||1))
+      .catch(()=>show("—"));
   }
 })();
 </script>
