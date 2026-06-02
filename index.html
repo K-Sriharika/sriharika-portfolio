@@ -17,7 +17,7 @@ const PORTFOLIO = {
   photo:    "images/harika.jpeg",   // your photo — already in the images/ folder
 
   // ---- AVAILABILITY (shown as badges in hero) ----
-  availability: ["Full-time", "Contract", "Project-based", "Freelance"],
+  availability: ["Remote", "Full-time", "Contract", "Project-based", "Freelance"],
 
   // ---- HERO ----
   hero: {
@@ -156,7 +156,7 @@ const PORTFOLIO = {
   ],
 
   // ---- RATE CARD ----
-  rateNote: "Flexible across PST / EST / UTC. Reach out for project-based or retainer arrangements.",
+  rateNote: "Flexible across IST / PST / EST / UTC. Reach out for project-based or retainer arrangements.",
   introCallRate: "₹ 250 / 30 min",
   rates: [
     { plan: "Hourly",    price: "$30 / hr",     detail: "AI evaluation, SxS ranking, hallucination detection, rubric review." },
@@ -767,7 +767,7 @@ PORTFOLIO.stats.forEach(s => {
 
 // about
 $("#aboutBody").innerHTML = PORTFOLIO.about.map(p=>`<p>${p}</p>`).join("");
-$("#aboutSide").innerHTML = `<b>Education</b><br>IIT Kanpur — M.Sc. Statistics<br>Osmania University. — B.Sc. Mathematics, Statistics & Computer Science<br><br><b>Focus</b><br>Vibe Coding · Data Analysis · RLHF · SFT · Multilingual NLP<br>Python · Prompt Engineering · Generalist · AI Trainer · STEM <br><br><b>Time zones</b><br>IST · PST · EST · UTC<br><br><b>Platforms</b><br>Mercor · AfterQuery · Turing · Innodata<br>Soul AI · OneForma · Pubic Sector · Chegg`;
+$("#aboutSide").innerHTML = `<b>Education</b><br>IIT Kanpur — M.Sc. Statistics  2016- 2018<br>Osmania University — B.Sc. Mathematics, Statistics & Computer Science  2014 - 2016<br><br><b>Focus</b><br>Vibe Coding · Data Analysis · RLHF · SFT · Multilingual NLP · Python · Prompt Engineering · Generalist · AI Trainer · STEM <br><br><b>Time zones</b><br>IST · PST · EST · UTC<br><br><b>Platforms</b><br>Mercor · AfterQuery · Turing · Innodata<br>Soul AI · OneForma · Pubic Sector(GoTS) · Chegg`;
 
 // skills
 PORTFOLIO.skills.forEach(g => {
@@ -932,5 +932,43 @@ $("#footName").textContent = PORTFOLIO.name;
 $("#footSub").textContent = `${PORTFOLIO.role} · ${new Date().getFullYear()}`;
 document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
 </script>
+<!-- Visitor counter (fixed bottom-right) -->
+<a href="#" id="visitorCounter" style="
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 100px;
+  background: rgba(11,11,13,.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .04em;
+  box-shadow: 0 8px 24px rgba(0,0,0,.4), 0 0 0 4px var(--accent-soft);
+  text-decoration: none;
+  pointer-events: none;
+">
+  <span style="width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); animation: pulse 1.8s ease-in-out infinite;"></span>
+  <span style="color:var(--muted);">visitors</span>
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=k-sriharika.sriharika-portfolio&left_color=transparent&right_color=transparent&left_text=&style=flat" 
+       alt="count" 
+       style="height:14px; vertical-align:middle; filter: brightness(0) saturate(100%) invert(95%) sepia(50%) saturate(2000%) hue-rotate(40deg) brightness(105%);">
+</a>
+
+<style>
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .5; transform: scale(.85); }
+}
+@media (max-width: 600px) {
+  #visitorCounter { bottom: 12px; right: 12px; font-size: 11px; padding: 6px 11px; }
+}
+</style>
 </body>
 </html>
