@@ -915,44 +915,56 @@ document.title = `${PORTFOLIO.name} — ${PORTFOLIO.role}`;
         async src="//gc.zgo.at/count.js"></script>
 
 <!-- Visitor count display via counterapi.dev -->
+<!-- Visitor count display via counterapi.dev -->
 <script>
 (function(){
   var el = document.getElementById('visitorCount');
-  var storageKey = 'sriharika-visited';
-  var countKey = 'sriharika-last-count';
-  var hasVisited = false;
-  var cachedCount = null;
-
-  try {
-    hasVisited = !!localStorage.getItem(storageKey);
-    cachedCount = localStorage.getItem(countKey);
-  } catch(e){}
-
-  // Show cached count immediately if available
-  if(cachedCount) el.textContent = cachedCount;
-
-  if(!hasVisited){
-    // First visit: increment
-    fetch('https://api.counterapi.dev/v1/sriharika-portfolio-visits/main/up')
-      .then(function(r){ return r.json(); })
-      .then(function(d){
-        if(d && d.count != null){
-          el.textContent = d.count.toLocaleString();
-          try {
-            localStorage.setItem(storageKey, '1');
-            localStorage.setItem(countKey, d.count.toLocaleString());
-          } catch(e){}
-        } else { el.textContent = cachedCount || '--'; }
-      })
-      .catch(function(){ el.textContent = cachedCount || '--'; });
-  } else {
-    // Return visit: just read (use /up but count won't be truly unique — 
-    // or show cached). We'll do a silent /up to get current count but 
-    // the localStorage gate already prevents inflating from same device.
-    // However counterapi counts ALL calls to /up. So for return visitors,
-    // just show cached count. It will update next time a NEW visitor arrives.
-    if(!cachedCount) el.textContent = '--';
-  }
+  // Using a new namespace to track true unique IP-based visits
+  var globalKey = 'sriharika-portfolio/unique-visitors';
+  
+  // Step 1: Check public IP address
+  fetch('https://api.ipify.org?format=json')
+    .then(function(res) { return res.json(); })
+    .then(function(ipData) {
+      // Create a safe, anonymized lookup key from the IP address
+      var ipKey = 'ip-' + ipData.ip.replace(/[\.:]/g, '-');
+      
+      // Step 2: Check if this IP key has counted before
+      fetch('https://api.counterapi.dev/v1/sriharika-unique-ips/' + ipKey)
+        .then(function(res) { return res.json(); })
+        .then(function(ipCountData) {
+          var isNewVisitor = !ipCountData || ipCountData.count === 0;
+          
+          if (isNewVisitor) {
+            // Step 3a: Mark this IP as visited
+            fetch('https://api.counterapi.dev/v1/sriharika-unique-ips/' + ipKey + '/up')
+              .then(function() {
+                // Step 3b: Increment the global unique visitor count
+                return fetch('https://api.counterapi.dev/v1/' + globalKey + '/up');
+              })
+              .then(function(res) { return res.json(); })
+              .then(function(globalData) {
+                el.textContent = globalData.count.toLocaleString();
+              });
+          } else {
+            // Step 4: IP already visited, just fetch the current global count
+            fetch('https://api.counterapi.dev/v1/' + globalKey)
+              .then(function(res) { return res.json(); })
+              .then(function(globalData) {
+                el.textContent = globalData.count.toLocaleString();
+              });
+          }
+        });
+    })
+    .catch(function() {
+      // Fallback: If IP lookup is blocked by a browser adblocker, simply read current count
+      fetch('https://api.counterapi.dev/v1/' + globalKey)
+        .then(function(res) { return res.json(); })
+        .then(function(globalData) {
+          el.textContent = globalData.count.toLocaleString();
+        })
+        .catch(function() { el.textContent = '--'; });
+    });
 })();
 </script>
 </body>
