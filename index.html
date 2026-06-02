@@ -128,9 +128,10 @@ const PORTFOLIO = {
 
   // ---- RESEARCH PROJECTS ----
   projects: [
-    { title: "Bilingual Sentiment Evaluation", tag: "NLP · Python · LLM", blurb: "Empirical comparison of lexicon-based vs. LLM sentiment classification on 64 bilingual Hindi-English Instagram comments (41.4M aggregate views). Found 39.1% disagreement rate — rising to 57% on Hindi-dense content — with structural implications for multilingual RLHF.", link: "https://github.com/K-Sriharika/Instagram-sentiment-analysis", image: "images/Instagram Project.png" },
-    { title: "Telangana Digital Repository",    tag: "Statistics · Database creation", blurb: "Architected a state-government data repository and predictive-modelling workflow to evaluate welfare schemes, cutting reporting time by 40% and supporting interstate time-series policy analysis.", link: "", image: "images/Telangana Digital Repository.png" },
-    { title: "RLHF Rubric & Calibration",       tag: "AI Evaluation · Rubric Design", blurb: "Built atomic 8–12 tag rubrics and difficulty-calibrated prompts (Easy 70–100% / Medium 40–70% / Hard 0–40%) to train and validate frontier code-generation and Vision-Language models.", link: "", image: "images/RLHF Rubric.png" }
+    { title: "Bilingual Sentiment Evaluation", tag: "NLP · Python · LLM", blurb: "Empirical comparison of lexicon-based vs. LLM sentiment classification on 64 bilingual Hindi-English Instagram comments (41.4M aggregate views). Found 39.1% disagreement rate — rising to 57% on Hindi-dense content — with structural implications for multilingual RLHF.", link: "https://drive.google.com/file/d/16kpG1duEhwPUgyBiKWk0tatGs8yIBWs4/view?usp=sharing", image: "images/Instagram Project.png" },
+    { title: "Telangana Digital Repository",    tag: "Statistics · Database creation", blurb: "Architected a state-government data repository and predictive-modelling workflow to evaluate welfare schemes, cutting reporting time by 40% and supporting interstate time-series policy analysis.", link: "https://drive.google.com/file/d/112YctiREPXdQKOKZyrI-xdak9izT31Wd/view?usp=sharing", image: "images/Telangana Digital Repository.png" },
+    { title: "RLHF Rubric & Calibration",       tag: "AI Evaluation · Rubric Design", blurb: "Built atomic 8–12 tag rubrics and difficulty-calibrated prompts (Easy 70–100% / Medium 40–70% / Hard 0–40%) to train and validate frontier code-generation and Vision-Language models.", link: "https://drive.google.com/file/d/1fXWoekDsesbPcKIQT3_yebKDUnSmzaEd/view?usp=sharing", image: "images/RLHF Rubric.png" }
+    { title: "Revenue Forecasting Research", tag: "Statistics · Econometrics · Public Finance", blurb: "Authored a GoTS-CEGIS research report applying four forecasting models (ARIMA, Tax Buoyancy, Log Regression, Consensus) to Telangana's tax revenue data — Consensus Forecasting achieved sub-₹30 crore error on an ₹87,000 crore base.", link: "https://drive.google.com/file/d/1yQeTvr6EyFm0otuv39nMl9v8ysWtP7b_/view?usp=sharing", image: "images/Revenue.png" },
   ],
 
   // ---- VIBE CODING PROJECTS (interactive builds) ----
@@ -590,6 +591,47 @@ body::after {
 </style>
 </head>
 <body>
+  <div id="availBanner" style="
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(90deg, #0B0B0D 0%, #1a1a24 50%, #0B0B0D 100%);
+  border-bottom: 1px solid var(--accent);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+">
+  <span style="
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+    flex-shrink: 0;
+    animation: pulse 1.8s ease-in-out infinite;
+  "></span>
+  <span style="font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.06em;">
+    OPEN TO WORK
+  </span>
+  <span style="font-family: var(--sans); font-size: 13px; color: #ECECE6;">
+    Looking for remote <strong>full-time</strong>, <strong>contract</strong>, <strong>part-time</strong> and <strong>project</strong> roles in AI Evaluation &amp; Statistics
+  </span>
+  <a href="#connect" style="
+    font-family: var(--mono); font-size: 12px;
+    padding: 6px 14px; border-radius: 100px;
+    border: 1px solid var(--accent);
+    color: var(--accent-ink);
+    background: var(--accent);
+    white-space: nowrap;
+    flex-shrink: 0;
+  ">Let's talk →</a>
+  <button onclick="document.getElementById('availBanner').style.display='none'" style="
+    background: none; border: none; color: var(--muted);
+    font-size: 18px; cursor: pointer; line-height: 1;
+    padding: 0 4px; flex-shrink: 0;
+  ">×</button>
+</div>
 
 <nav>
   <div class="wrap">
@@ -767,7 +809,7 @@ PORTFOLIO.stats.forEach(s => {
 
 // about
 $("#aboutBody").innerHTML = PORTFOLIO.about.map(p=>`<p>${p}</p>`).join("");
-$("#aboutSide").innerHTML = `<b>Education</b><br>IIT Kanpur — M.Sc. Statistics  2016- 2018<br>Osmania University — B.Sc. Mathematics, Statistics & Computer Science  2014 - 2016<br><br><b>Focus</b><br>Vibe Coding · Data Analysis · RLHF · SFT · Multilingual NLP · Python · Prompt Engineering · Generalist · AI Trainer · STEM <br><br><b>Time zones</b><br>IST · PST · EST · UTC<br><br><b>Platforms</b><br>Mercor · AfterQuery · Turing · Innodata<br>Soul AI · OneForma · Pubic Sector(GoTS) · Chegg`;
+$("#aboutSide").innerHTML = `<b>Education</b><br>IIT Kanpur — M.Sc. Statistics  [2016- 2018]<br>Osmania University — B.Sc. Mathematics, Statistics & Computer Science  [2014 - 2016]<br><br><b>Focus</b><br>Vibe Coding · Data Analysis · RLHF · SFT · Multilingual NLP · Python · Prompt Engineering · Generalist · AI Trainer · STEM <br><br><b>Time zones</b><br>IST · PST · EST · UTC<br><br><b>Platforms</b><br>Mercor · AfterQuery · Turing · Innodata<br>Soul AI · OneForma · Pubic Sector(GoTS) · Chegg`;
 
 // skills
 PORTFOLIO.skills.forEach(g => {
@@ -864,8 +906,7 @@ PORTFOLIO.links.forEach(l => {
 
 // rate card — intro call row
 const ir = $("#introCallRow");
-ir.innerHTML=`<div class="ic-text"><b>30-min intro call</b><br>Let's get to know each other — no pressure.</div><div class="ic-rate">${PORTFOLIO.introCallRate}</div>`;
-
+ir.innerHTML=`<div class="ic-text"><b>30-min intro call</b><br>Not a pitch — a conversation. Tell me what you're building or evaluating, and I'll tell you honestly whether I can help and how.</div><div class="ic-rate">${PORTFOLIO.introCallRate}</div>`;
 // rate card — tiers
 PORTFOLIO.rates.forEach(r => {
   const c = el("div","rate"+(r.featured?" featured":""));
