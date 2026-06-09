@@ -115,20 +115,12 @@ A structured showcase of rubric design, inter-annotator calibration, and evaluat
 
 ---
 
-## 📊 GitHub Stats
-
-![Harika's GitHub Stats](https://github-readme-stats.vercel.app/api?username=K-Sriharika&show_icons=true&theme=dark&hide_border=true&bg_color=0d1117&title_color=CDFF4D&icon_color=CDFF4D)
-
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=K-Sriharika&layout=compact&theme=dark&hide_border=true&bg_color=0d1117&title_color=CDFF4D)
-
----
-
 ## 🤝 Let's Connect
 
 I'm actively seeking **remote AI evaluation, NLP research, and data science roles**.
 
 - 🌐 **Portfolio:** [k-sriharika.github.io/sriharika-portfolio](https://k-sriharika.github.io/sriharika-portfolio/)
-- 💼 **LinkedIn:** [linkedin.com/in/k-sriharika](https://linkedin.com/in/k-sriharika)
+- 💼 **LinkedIn:** [linkedin.com/in/k-sriharika]([https://linkedin.com/in/k-sriharika)
 - 🐙 **GitHub:** [github.com/K-Sriharika](https://github.com/K-Sriharika)
 
 ---
