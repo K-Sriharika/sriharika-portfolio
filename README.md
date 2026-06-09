@@ -120,7 +120,7 @@ A structured showcase of rubric design, inter-annotator calibration, and evaluat
 I'm actively seeking **remote AI evaluation, NLP research, and data science roles**.
 
 - 🌐 **Portfolio:** [k-sriharika.github.io/sriharika-portfolio](https://k-sriharika.github.io/sriharika-portfolio/)
-- 💼 **LinkedIn:** [linkedin.com/in/k-sriharika](https://linkedin.com/in/k-sriharika)
+- 💼 **LinkedIn:** [linkedin.com/in/k-sriharika](https://www.linkedin.com/in/sriharika-k/)
 - 🐙 **GitHub:** [github.com/K-Sriharika](https://github.com/K-Sriharika)
 
 ---
